@@ -15,9 +15,12 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include
-
+from django.urls import path
+from dashboard.views import home , fabric
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', include('dashboard.urls')),
+    path("admin/", admin.site.urls),
+    path("dispatch/", home, name="dispatch"), 
+    path("fabric/", fabric, name="fabric"),   
+    path("", home, name="home"),               
 ]
+

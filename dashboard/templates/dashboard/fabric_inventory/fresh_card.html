@@ -1,0 +1,49 @@
+<div class="section">
+  <h3>FRESH</h3>
+
+  <div class="summary">
+    <p><strong>{{ fresh.overall_pct }}%</strong> of Overall Inventory</p>
+    <p>Total Fresh: {{ fresh.total|intcomma }}</p>
+  </div>
+
+  <table class="table">
+    <tr><th>Status</th><th>Qty</th><th>%</th></tr>
+    <tr><td>Open</td><td>{{ fresh.open|intcomma }}</td><td>{{ fresh.pct_open }}%</td></tr>
+    <tr><td>Close</td><td>{{ fresh.close|intcomma }}</td><td>{{ fresh.pct_close }}%</td></tr>
+    <tr><td>Cancel</td><td>{{ fresh.cancel|intcomma }}</td><td>{{ fresh.pct_cancel }}%</td></tr>
+    <tr><td>RFAN</td><td>{{ fresh.rfan|intcomma }}</td><td>{{ fresh.pct_rfan }}%</td></tr>
+  </table>
+
+  <h4>Grade Wise</h4>
+  <table class="table">
+    {% for g in fresh_grade_list %}
+      <tr>
+        <td>Grade {{ g.grade }}</td>
+        <td>{{ g.value|intcomma }}</td>
+        <td>{{ g.pct }}%</td>
+      </tr>
+    {% endfor %}
+  </table>
+
+  <h4>Manager Wise</h4>
+  <table class="table">
+    {% for m in fresh_manager_list %}
+      <tr>
+        <td>{{ m.manager }}</td>
+        <td>{{ m.value|intcomma }}</td>
+        <td>{{ m.pct }}%</td>
+      </tr>
+    {% endfor %}
+  </table>
+
+  <h4>Aging Wise</h4>
+  <table class="table">
+    {% for a in fresh_aging_list %}
+      <tr>
+        <td>{{ a.age }}</td>
+        <td>{{ a.value|intcomma }}</td>
+        <td>{{ a.pct }}%</td>
+      </tr>
+    {% endfor %}
+  </table>
+</div>

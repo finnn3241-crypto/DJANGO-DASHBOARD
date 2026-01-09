@@ -1,0 +1,61 @@
+{% load humanize %}
+
+<style>
+#kpi-container {
+    display: flex;
+    margin-bottom: 20px;
+}
+.kpi-card {
+    flex: 1;
+    box-shadow: 1px 1px 3px rgba(0,0,0,0.75);
+    padding: 1em;
+    border-radius: 0.3em;
+    font-family: sans-serif;
+    width: 240px;
+    min-width: 180px;
+    margin-left: 0.5em;
+    margin-top: 0.5em;
+    color: #fff;
+}
+.kpi-bg {
+    background: linear-gradient(129deg, #254d5c, #90f5ff);
+}
+.card-value {
+    font-size: 30px;
+    font-weight: bolder;
+}
+.card-text {
+    font-weight: 700;
+    font-size: 22px;
+    padding-top: 1em;
+}
+</style>
+
+<div id="kpi-container">
+
+<div class="kpi-card kpi-bg">
+    <span class="card-value">{{ kpi_meter|intcomma }}</span>
+    <span class="card-text">Meters</span>
+</div>
+
+<div class="kpi-card kpi-bg">
+    <span class="card-value">{{ kpi_amount|intcomma }}</span>
+    <span class="card-text">Amount</span>
+</div>
+
+<div class="kpi-card kpi-bg">
+    <span class="card-value">{{ kpi_grade_a|intcomma }}</span>
+    <span class="card-text">Grade A</span>
+</div>
+
+<div class="kpi-card kpi-bg">
+    <span class="card-value">{{ kpi_grade_b|intcomma }}</span>
+    <span class="card-text">Grade B</span>
+</div>
+
+<div class="kpi-card kpi-bg">
+    <span class="card-value">{{ kpi_grade_c|intcomma }}</span>
+    <span class="card-text">Grade C</span>
+</div>
+
+</div>
