@@ -1,0 +1,33 @@
+{% load humanize %}
+
+<div style="padding:0 20px">
+
+<div class="mgr-row">
+<div style="font-weight:600;">Behind Target In %</div>
+<div class="bar-outer"><div class="bar-inner" style="width:{{ behind_percent_L }}%;background:#ddd60a;">{{ behind_percent_L }}%</div></div>
+<div style="font-size:13px;font-weight:600;text-align:right;color:#555">Target To Be Achieved Till Date: {{ target_till_date_L|intcomma }}</div>
+</div>
+
+<div style="text-align:center;font-size:21px;font-weight:600;color:mediumvioletred;margin:15px 0">Expected Dispatch Target {{ expected_dispatch_L|intcomma }}</div>
+
+<table style="width:100%;font-size:15px">
+<tr><td>Previous Day Dispatch :</td><td style="text-align:right;font-weight:600">{{ prev_day_dispatch_L|intcomma }}</td></tr>
+<tr><td>Current Day Planned :</td><td style="text-align:right;font-weight:600">{{ curr_day_plan_L|intcomma }}</td></tr>
+<tr><td>Current Month Planned :</td><td style="text-align:right;font-weight:600">{{ total_plan_L|intcomma }}</td></tr>
+<tr><td>Current Month Dispatch :</td><td style="text-align:right;font-weight:600">{{ curr_dispatch_L|intcomma }}</td></tr>
+<tr><td>Balance Current Month Dispatch :</td><td style="text-align:right;font-weight:600">{{ balance_plan_L|intcomma }}</td></tr>
+</table>
+
+</div>
+
+<div class="cardHeader">MANAGER WISE</div>
+
+<div class="cardBody">
+{% for m in managers_L %}
+<div class="mgr-row">
+<div class="mgr-name">{{ m.name }} <span>{{ m.dispatch|intcomma }}</span></div>
+<div class="bar-outer"><div class="bar-inner" style="width:{{ m.percent }}%;background:{{ m.color }};">{{ m.percent }}%</div></div>
+<div style="font-size:13px;font-weight:600;text-align:right;color:#555">Plan: {{ m.total|intcomma }}</div>
+</div>
+{% endfor %}
+</div>

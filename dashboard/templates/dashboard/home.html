@@ -1,0 +1,149 @@
+{% load humanize %}
+
+<style>
+
+.pageTitle{
+    text-align:center;
+    font-size:30px;
+    font-weight:800;
+    margin-top:30px;
+    margin-bottom:15px;
+    color:#222;
+}
+
+.sectionTitles{
+    display:flex;
+    justify-content:center;
+    gap:25px;
+    margin-bottom:10px;
+}
+
+.sectionTitles div{
+    width:480px;
+    text-align:center;
+    font-size:20px;
+    font-weight:700;
+    color:#222;
+}
+
+.cardsGrid{
+    display:flex;
+    gap:25px;
+    justify-content:center;
+    flex-wrap:wrap;
+}
+
+.cardInv {
+    width: 480px;
+    background: #eceef1;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    margin: 10px 0 40px;
+    padding-bottom: 20px;
+}
+
+.chart-container { text-align:center; margin:25px auto; }
+
+.head-chart-text { margin-bottom:12px; font-size:18px; font-weight:600; color:#333; }
+
+.chart-text { margin-top:12px; font-size:18px; font-weight:600; }
+
+.chart-subtext { font-size:16px; font-weight:600; color:#666; }
+
+.chartWrap{ width:70px; height:70px; margin:0 auto; position:relative; }
+.chartWrap canvas{ width:100%!important; height:100%!important; }
+
+.mgr-row { margin-top:10px; }
+
+.bar-outer { background:#787878; border-radius:20px; overflow:hidden; height:15px; margin-top:4px; }
+
+.bar-inner { height:15px; line-height:13px; border-radius:20px; font-size:13px; font-weight:700; text-align:center; }
+
+.cardHeader { background:#714b67; color:white; font-weight:700; font-size:18px; padding:10px; text-align:center; border-radius:4px; }
+
+.cardBody { font-size:16px; padding:12px 20px; }
+
+.mgr-name { display:flex; justify-content:space-between; font-weight:600; }
+
+</style>
+
+<div class="pageTitle">DISPATCH</div>
+
+<div class="sectionTitles">
+    <div>EXPORT</div>
+    <div>LOCAL</div>
+    <div>TOTAL</div>
+</div>
+
+<div class="cardsGrid">
+
+<!-- ================= CARD 1 ================= -->
+<div class="cardInv">
+
+<div class="chart-container">
+    <div class="head-chart-text">Monthly Dispatch Progress</div>
+    <div class="chartWrap"><canvas id="chart1"></canvas></div>
+    <div class="chart-text">{{ percentage }}% of Monthly Target Achieved</div>
+    <div class="chart-subtext">(Dispatch: {{ curr_dispatch|intcomma }} mtr / Plan: {{ total_plan|intcomma }} mtr)</div>
+</div>
+
+{% include "dashboard/card_body.html" %}
+
+</div>
+
+<!-- ================= CARD 2 ================= -->
+<div class="cardInv">
+
+<div class="chart-container">
+    <div class="head-chart-text">Monthly Dispatch Progress</div>
+    <div class="chartWrap"><canvas id="chart2"></canvas></div>
+    <div class="chart-text">{{ percentage_L }}% of Monthly Target Achieved</div>
+    <div class="chart-subtext">(Dispatch: {{ curr_dispatch_L|intcomma }} mtr / Plan: {{ total_plan_L|intcomma }} mtr)</div>
+</div>
+
+{% include "dashboard/local_card.html" %}
+
+</div>
+
+<!-- ================= CARD 3 ================= -->
+<div class="cardInv">
+
+<div class="chart-container">
+    <div class="head-chart-text">Monthly Dispatch Progress</div>
+    <div class="chartWrap"><canvas id="chart3"></canvas></div>
+    <div class="chart-text">{{ percentage_tot }}% of Monthly Target Achieved</div>
+    <div class="chart-subtext">(Dispatch: {{ curr_dispatch_tot|intcomma }} mtr / Plan: {{ total_plan_tot|intcomma }} mtr)</div>
+</div>
+
+{% include "dashboard/total_card.html" %}
+
+</div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+function buildChart(id){
+    new Chart(document.getElementById(id), {
+        type: "doughnut",
+        data: { 
+            datasets:[{ 
+                data:[{{ curr_dispatch }},{{ balance_plan }}], 
+                backgroundColor:["#00A300","#E0E0E0"], 
+                borderWidth:0 
+            }]
+        },
+        options:{ 
+            responsive:true, 
+            maintainAspectRatio:false, 
+            cutout:"75%", 
+            plugins:{ legend:{ display:false } } 
+        }
+    });
+}
+
+buildChart("chart1");
+buildChart("chart2");
+buildChart("chart3");
+</script>
