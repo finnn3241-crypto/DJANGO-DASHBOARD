@@ -16,11 +16,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from dashboard.views import home , fabric
+from dashboard.views import home , fabric ,sample,oih
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("dispatch/", home, name="dispatch"), 
-    path("fabric/", fabric, name="fabric"),   
+    path("fabric/", fabric, name="fabric"),
+    path("sample/", sample, name="sample") ,  
+    path("oih/", oih, name="oih") , 
     path("", home, name="home"),               
 ]
 

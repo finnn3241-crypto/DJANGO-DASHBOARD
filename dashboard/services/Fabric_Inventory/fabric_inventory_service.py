@@ -146,3 +146,124 @@ def get_fresh_aging_data():
     total = sum(v for _, v in rows) or 1
 
     return [{"age": a, "value": v, "pct": round(v/total*100, 2)} for a, v in rows]
+
+
+
+# STOCK
+
+def get_stock_data():
+    with connection.cursor() as cur:
+        cur.execute("""
+            SELECT
+                SUM(CASE WHEN system_remarks24rpt = 'STOCK_FRSH' THEN meter END),
+                SUM(CASE WHEN system_remarks24rpt = 'STOCK_OTHERS' THEN meter END),
+                SUM(CASE WHEN system_remarks24rpt IN ('STOCK_FRSH','STOCK_OTHERS') THEN meter END),
+                SUM(CASE WHEN system_remarks = 'SOLD OUT' THEN meter END),
+                SUM(CASE 
+                        WHEN system_remarks24rpt IN ('STOCK_FRSH','STOCK_OTHERS')
+                         AND system_remarks <> 'SOLD OUT' 
+                        THEN meter END)
+            FROM rpt_fabric_db_v2_po
+        """)
+        st_fresh, st_others, st_total, st_sold, net_stock = cur.fetchone()
+
+        cur.execute("SELECT COALESCE(SUM(meter),0) FROM rpt_fabric_db_v2_po")
+        sum_meter = cur.fetchone()[0]
+
+    # Defaults
+    st_fresh = st_fresh or 0
+    st_others = st_others or 0
+    st_total = st_total or 0
+    st_sold = st_sold or 0
+    net_stock = net_stock or 0
+
+    overall_pct = round((net_stock / sum_meter) * 100, 1) if sum_meter else 0
+
+    def pct(x, base):
+        return round((x / base) * 100, 2) if base else 0
+
+    return {
+        "stock": {
+            "fresh": st_fresh,
+            "others": st_others,
+            "total": st_total,
+            "sold": st_sold,
+            "net": net_stock,
+            "overall_pct": overall_pct,
+            "pct_fresh": pct(st_fresh, net_stock),
+            "pct_others": pct(st_others, net_stock),
+            "pct_sold": pct(st_sold, st_total)
+        }
+    }
+
+def get_stock_grade_data():
+    with connection.cursor() as cur:
+        cur.execute("""
+            SELECT COALESCE(grade,'BLANK'), SUM(meter)
+            FROM rpt_fabric_db_v2_po
+            WHERE system_remarks24rpt IN ('STOCK_FRSH','STOCK_OTHERS')
+              AND system_remarks <> 'SOLD OUT'
+            GROUP BY COALESCE(grade,'BLANK')
+            ORDER BY 1
+        """)
+        rows = cur.fetchall()
+
+    total = sum(v for _, v in rows) or 1
+
+    return [
+        {"grade": g, "value": v, "pct": round(v/total*100, 2)}
+        for g, v in rows
+    ]
+
+def get_stock_manager_data():
+    with connection.cursor() as cur:
+        cur.execute("""
+            SELECT
+                CASE
+                    WHEN NVL(mkt_person,'BLANK') IN ('ABBAS,FAYYAZ','ABDUL RAUF')
+                        THEN 'FAYYAZ / ABDUL RAUF'
+                    WHEN NVL(mkt_person,'BLANK') IN ('GHULAM NABI','KHALID')
+                        THEN 'GHULAM NABI / KHALID'
+                    ELSE NVL(mkt_person,'BLANK')
+                END AS manager,
+                SUM(meter)
+            FROM rpt_fabric_db_v2_po
+            WHERE system_remarks24rpt IN ('STOCK_FRSH','STOCK_OTHERS')
+              AND system_remarks <> 'SOLD OUT'
+            GROUP BY
+                CASE
+                    WHEN NVL(mkt_person,'BLANK') IN ('ABBAS,FAYYAZ','ABDUL RAUF')
+                        THEN 'FAYYAZ / ABDUL RAUF'
+                    WHEN NVL(mkt_person,'BLANK') IN ('GHULAM NABI','KHALID')
+                        THEN 'GHULAM NABI / KHALID'
+                    ELSE NVL(mkt_person,'BLANK')
+                END
+            ORDER BY 1
+        """)
+        rows = cur.fetchall()
+
+    total = sum(v for _, v in rows) or 1
+
+    return [
+        {"manager": m, "value": v, "pct": round(v/total*100, 2)}
+        for m, v in rows
+    ]
+
+def get_stock_aging_data():
+    with connection.cursor() as cur:
+        cur.execute("""
+            SELECT age, SUM(meter)
+            FROM rpt_fabric_db_v2_po
+            WHERE system_remarks24rpt IN ('STOCK_FRSH','STOCK_OTHERS')
+              AND system_remarks <> 'SOLD OUT'
+            GROUP BY age, age_ord
+            ORDER BY age_ord
+        """)
+        rows = cur.fetchall()
+
+    total = sum(v for _, v in rows) or 1
+
+    return [
+        {"age": a, "value": v, "pct": round(v/total*100, 2)}
+        for a, v in rows
+    ]
