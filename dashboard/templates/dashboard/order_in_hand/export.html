@@ -1,0 +1,21 @@
+{% load humanize %}
+<div style="border: 1px solid #ccc; padding: 15px; width: 300px; border-radius: 8px;">
+    <h3 style="text-align: center; border-bottom: 1px solid #eee; padding-bottom: 10px;">EXPORT SUMMARY</h3>
+    <table style="width: 100%; font-size: 14px; line-height: 2;">
+        <tr>
+            <td>Total MTR:</td>
+            <td style="text-align: right; font-weight: bold;">{{ dispatch.current|intcomma }}</td>
+        </tr>
+        <tr>
+            <td>Amount (PKR):</td>
+            <td style="text-align: right; font-weight: bold;">{{ dispatch.amount_pkr|intcomma }}M</td>
+        </tr>
+        <tr>
+            <td>Avg Rate:</td>
+            <td style="text-align: right; font-weight: bold;">{{ dispatch.rate }}</td>
+        </tr>
+    </table>
+    <div style="background: #fdf2f2; color: #b91c1c; text-align: center; padding: 5px; margin-top: 10px; font-weight: bold;">
+        {{ dispatch.days }} DAYS REMAINING
+    </div>
+</div>

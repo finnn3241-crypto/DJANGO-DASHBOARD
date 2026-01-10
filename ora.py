@@ -28,9 +28,9 @@ def get_oracle_connection():
 PG_CONFIG = {
     "host": "localhost",
     "port": 5432,
-    "database": "postgres",
+    "database": "erp_db",
     "user": "postgres",
-    "password": "pak911"
+    "password": "moin123"
 }
 
 def get_pg_connection():
@@ -41,7 +41,7 @@ def get_pg_connection():
 oracle_conn = get_oracle_connection()
 oracle_cur = oracle_conn.cursor()
 
-oracle_cur.execute("SELECT * FROM exp_imp_rate")
+oracle_cur.execute("SELECT * FROM db_ins_data")
 rows = oracle_cur.fetchall()
 
 # 🔹 Get column names dynamically
@@ -58,7 +58,7 @@ columns_sql = ", ".join(columns)
 placeholders = ", ".join(["%s"] * len(columns))
 
 insert_sql = f"""
-    INSERT INTO exp_imp_rate ({columns_sql})
+    INSERT INTO db_ins_data ({columns_sql})
     VALUES ({placeholders})
 """
 
