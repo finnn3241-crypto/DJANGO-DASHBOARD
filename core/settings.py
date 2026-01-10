@@ -81,9 +81,9 @@ WSGI_APPLICATION = 'core.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',    # Name of your database
+        'NAME': 'erp_db',    # Name of your database
         'USER': 'postgres',      # This is usually the default username
-        'PASSWORD': 'pak911', # Put your pgAdmin password here
+        'PASSWORD': 'moin123', # Put your pgAdmin password here
         'HOST': 'localhost',
         'PORT': '5432',
     }
