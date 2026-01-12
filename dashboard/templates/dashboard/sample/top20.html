@@ -1,0 +1,127 @@
+{% load humanize %}
+
+<div class="unitHeaderBar" style="background:gold;">TOP 20 CUSTOMERS</div>
+
+<div class="SideBySideWrap">
+
+<!-- PREVIOUS DAY -->
+<div class="fabricCardPD">
+<div class="fabricHeadChartTextPD">PREVIOUS DAY</div>
+
+<table>
+{% for r in top20.prev_reason %}
+<tr>
+  <td class="fabricLabelCellCM">{{ r.reason }}</td>
+  <td class="fabricValueCellCM">Qty {{ r.qty|intcomma }} <span style="color:red;font-size:10px">{{ r.per }}%</span></td>
+  <td class="fabricValueCellCM">Rs. {{ r.amount|intcomma }} @ {{ top20.rate }} P.Kg</td>
+</tr>
+{% endfor %}
+</table>
+
+<div class="pdDividerPD"></div>
+
+<div class="sectionTitlePD">CUSTOMER WISE</div>
+<table>
+{% for c in top20.prev_customer %}
+<tr>
+  <td class="fabricLabelCellCM">{{ c.customer }}</td>
+  <td class="fabricValueCellCM">Qty {{ c.qty|intcomma }}</td>
+  <td class="fabricValueCellCM">Rs. {{ c.amount|intcomma }} <span style="color:red;font-size:10px">{{ c.per }}%</span></td>
+</tr>
+{% endfor %}
+</table>
+
+<div class="pdDividerPD"></div>
+
+<div class="sectionTitlePD">CATEGORY WISE</div>
+<table>
+{% for c in top20.category_prev %}
+<tr>
+  <td class="fabricLabelCellCM">{{ c.category }}</td>
+  <td class="fabricValueCellCM">Qty {{ c.qty|intcomma }}</td>
+  <td class="fabricValueCellCM">
+    Rs. {{ c.amount|intcomma }} @ {{ top20.rate }} P.Kg
+    <span style="color:red;font-size:10px">{{ c.per }}%</span>
+  </td>
+</tr>
+{% endfor %}
+</table>
+
+</div>
+
+<!-- CURRENT MONTH -->
+<div class="fabricCardMN">
+<div class="fabricHeadChartTextMN">CURRENT MONTH</div>
+
+<table>
+{% for r in top20.curr_reason %}
+<tr>
+  <td class="fabricLabelCellCM">{{ r.reason }}</td>
+  <td class="fabricValueCellCM">Qty {{ r.qty|intcomma }} <span style="color:red;font-size:10px">{{ r.per }}%</span></td>
+  <td class="fabricValueCellCM">Rs. {{ r.amount|intcomma }} @ {{ top20.rate }} P.Kg</td>
+</tr>
+{% endfor %}
+</table>
+
+<div class="pdDividerPD"></div>
+
+<div class="sectionTitlePD">CUSTOMER WISE</div>
+<table>
+{% for c in top20.curr_customer %}
+<tr>
+  <td class="fabricLabelCellCM">{{ c.customer }}</td>
+  <td class="fabricValueCellCM">Qty {{ c.qty|intcomma }}</td>
+  <td class="fabricValueCellCM">Rs. {{ c.amount|intcomma }} <span style="color:red;font-size:10px">{{ c.per }}%</span></td>
+</tr>
+{% endfor %}
+</table>
+
+<div class="pdDividerPD"></div>
+
+<div class="sectionTitlePD">ARTICLE / COLOR DISPATCHED TO SAME CUSTOMER</div>
+<table>
+{% for a in top20.article_color %}
+<tr>
+  <td class="fabricLabelCellCM">{{ a.customer }}</td>
+  <td class="fabricLabelCellCM">{{ a.style_color }}</td>
+  <td class="fabricValueCellCM">Count {{ a.cnt }}</td>
+</tr>
+{% endfor %}
+</table>
+
+<div class="pdDividerPD"></div>
+
+<div class="sectionTitlePD">CATEGORY WISE</div>
+<table>
+{% for c in top20.category_month %}
+<tr>
+  <td class="fabricLabelCellCM">{{ c.category }}</td>
+  <td class="fabricValueCellCM">Qty {{ c.qty|intcomma }}</td>
+  <td class="fabricValueCellCM">
+    Rs. {{ c.amount|intcomma }} @ {{ top20.rate }} P.Kg
+    <span style="color:red;font-size:10px">{{ c.per }}%</span>
+  </td>
+</tr>
+{% endfor %}
+</table>
+
+<div class="pdDividerPD"></div>
+
+<div class="sectionTitlePD">CATEGORY WISE</div>
+<table>
+{% for c in top20.category_prev %}
+<tr>
+  <td class="fabricLabelCellCM">{{ c.category }}</td>
+  <td class="fabricValueCellCM">Qty {{ c.qty|intcomma }}</td>
+  <td class="fabricValueCellCM">
+    Rs. {{ c.amount|intcomma }} @ {{ top20.rate }} P.Kg
+    <span style="color:red;font-size:10px">{{ c.per }}%</span>
+  </td>
+</tr>
+{% endfor %}
+</table>
+
+
+</div>
+
+</div>

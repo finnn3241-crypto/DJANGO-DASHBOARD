@@ -1,49 +1,437 @@
-<div class="section">
-  <h3>FRESH</h3>
+{% load humanize %}
 
-  <div class="summary">
-    <p><strong>{{ fresh.overall_pct }}%</strong> of Overall Inventory</p>
-    <p>Total Fresh: {{ fresh.total|intcomma }}</p>
-  </div>
+<style>
+body { margin:0; padding:0; }
 
-  <table class="table">
-    <tr><th>Status</th><th>Qty</th><th>%</th></tr>
-    <tr><td>Open</td><td>{{ fresh.open|intcomma }}</td><td>{{ fresh.pct_open }}%</td></tr>
-    <tr><td>Close</td><td>{{ fresh.close|intcomma }}</td><td>{{ fresh.pct_close }}%</td></tr>
-    <tr><td>Cancel</td><td>{{ fresh.cancel|intcomma }}</td><td>{{ fresh.pct_cancel }}%</td></tr>
-    <tr><td>RFAN</td><td>{{ fresh.rfan|intcomma }}</td><td>{{ fresh.pct_rfan }}%</td></tr>
-  </table>
+.fabric-row {
+    display:flex;
+    gap:16px;
+    width:100%;
+    padding:12px 16px;
+    box-sizing:border-box;
+}
 
-  <h4>Grade Wise</h4>
-  <table class="table">
-    {% for g in fresh_grade_list %}
-      <tr>
-        <td>Grade {{ g.grade }}</td>
-        <td>{{ g.value|intcomma }}</td>
-        <td>{{ g.pct }}%</td>
-      </tr>
-    {% endfor %}
-  </table>
+.freshCard {
+    flex:1;
+    min-width:260px;
+    background:#eceef1;
+    border-radius:8px;
+    box-shadow:0 2px 5px rgba(0,0,0,.2);
+    padding-bottom:20px;
+}
 
-  <h4>Manager Wise</h4>
-  <table class="table">
-    {% for m in fresh_manager_list %}
-      <tr>
-        <td>{{ m.manager }}</td>
-        <td>{{ m.value|intcomma }}</td>
-        <td>{{ m.pct }}%</td>
-      </tr>
-    {% endfor %}
-  </table>
+.freshHeader {
+    background:#714b67;
+    color:white;
+    font-weight:700;
+    font-size:18px;
+    padding:10px;
+    text-align:center;
+    border-radius:4px;
+}
 
-  <h4>Aging Wise</h4>
-  <table class="table">
-    {% for a in fresh_aging_list %}
-      <tr>
-        <td>{{ a.age }}</td>
-        <td>{{ a.value|intcomma }}</td>
-        <td>{{ a.pct }}%</td>
-      </tr>
-    {% endfor %}
-  </table>
+.freshBody { padding:12px; }
+
+.freshLabelCell { text-align:left; }
+.freshValueCell { text-align:right; font-weight:600; }
+
+.bar-outer {
+    width:100%;
+    height:13px;
+    background:#e0e0e0;
+    border-radius:10px;
+    overflow:hidden;
+    margin-top:4px;
+    position:relative;
+}
+.bar-inner { height:100%; border-radius:10px; }
+.bar-text {
+    position:absolute;
+    width:100%;
+    text-align:center;
+    line-height:13px;
+    font-size:11px;
+    font-weight:bold;
+}
+
+.sectionBox {
+    background:lightgoldenrodyellow;
+    border-radius:14px;
+    margin:10px;
+    padding:10px;
+}
+
+.sectionTitle {
+    text-align:center;
+    font-weight:700;
+    font-size:15px;
+    padding:5px;
+    border-radius:10px;
+    margin-bottom:6px;
+}
+
+.grade{background:#82d9f3;}
+.manager{background:#ff9065;}
+.aging{background:#86ef8e;}
+
+.rowBlock { margin-bottom:8px; }
+.rowTop { display:flex; justify-content:space-between; }
+.rowLabel { font-weight:500; }
+.rowValue { font-weight:600; }
+.rowBar { margin-top:3px; }
+
+.freshChartContainer { text-align:center; margin:10px 0 15px; }
+#freshProgressChart { width:85px!important; height:85px!important; margin:auto; }
+.freshChartText { font-weight:600; margin-top:6px; }
+.freshChartSubText { font-size:12px; color:#555; }
+</style>
+
+<div class="fabric-row">
+<div class="freshCard">
+<div class="freshHeader">FRESH</div>
+
+<div class="freshBody">
+
+<div class="freshChartContainer">
+    <canvas id="freshProgressChart"></canvas>
+    <div class="freshChartText">{{ fresh.overall_pct }}% of Overall Inventory</div>
+    <div class="freshChartSubText">
+        (Inventory: {{ fresh.total|intcomma }} / Meter: {{ kpi_meter|intcomma }})
+    </div>
 </div>
+
+<table width="100%">
+<tr><td class="freshLabelCell">Open :</td><td class="freshValueCell">{{ fresh.open|intcomma }}</td></tr>
+<tr><td colspan="2"><div class="bar-outer"><div class="bar-inner" style="width:{{ fresh.pct_open }}%;background:#4caf50;"></div><div class="bar-text">{{ fresh.pct_open }}%</div></div></td></tr>
+
+<tr><td class="freshLabelCell">Close :</td><td class="freshValueCell">{{ fresh.close|intcomma }}</td></tr>
+<tr><td colspan="2"><div class="bar-outer"><div class="bar-inner" style="width:{{ fresh.pct_close }}%;background:#2196f3;"></div><div class="bar-text">{{ fresh.pct_close }}%</div></div></td></tr>
+
+<tr><td class="freshLabelCell">Cancel :</td><td class="freshValueCell">{{ fresh.cancel|intcomma }}</td></tr>
+<tr><td colspan="2"><div class="bar-outer"><div class="bar-inner" style="width:{{ fresh.pct_cancel }}%;background:#ff9510;"></div><div class="bar-text">{{ fresh.pct_cancel }}%</div></div></td></tr>
+
+<tr><td class="freshLabelCell">RFAN :</td><td class="freshValueCell">{{ fresh.rfan|intcomma }}</td></tr>
+<tr><td colspan="2"><div class="bar-outer"><div class="bar-inner" style="width:{{ fresh.pct_rfan }}%;background:#e91e63;"></div><div class="bar-text">{{ fresh.pct_rfan }}%</div></div></td></tr>
+
+<tr><td class="freshLabelCell"><b>Total :</b></td><td class="freshValueCell"><b>{{ fresh.total|intcomma }}</b></td></tr>
+</table>
+
+<div class="sectionBox">
+<div class="sectionTitle grade">GRADE WISE</div>
+{% for g in fresh_grade_list %}
+<div class="rowBlock">
+<div class="rowTop"><div class="rowLabel">{{ g.grade }}</div><div class="rowValue">{{ g.value|intcomma }}</div></div>
+<div class="rowBar"><div class="bar-outer"><div class="bar-inner" style="width:{{ g.pct }}%;background:#4caf50;"></div><div class="bar-text">{{ g.pct }}%</div></div></div>
+</div>
+{% endfor %}
+</div>
+
+<div class="sectionBox">
+<div class="sectionTitle manager">MANAGER WISE</div>
+{% for m in fresh_manager_list %}
+<div class="rowBlock">
+<div class="rowTop"><div class="rowLabel">{{ m.manager }}</div><div class="rowValue">{{ m.value|intcomma }}</div></div>
+<div class="rowBar"><div class="bar-outer"><div class="bar-inner" style="width:{{ m.pct }}%;background:#2196f3;"></div><div class="bar-text">{{ m.pct }}%</div></div></div>
+</div>
+{% endfor %}
+</div>
+
+<div class="sectionBox">
+<div class="sectionTitle aging">AGING WISE</div>
+{% for a in fresh_aging_list %}
+<div class="rowBlock">
+<div class="rowTop"><div class="rowLabel">{{ a.age }}</div><div class="rowValue">{{ a.value|intcomma }}</div></div>
+<div class="rowBar"><div class="bar-outer"><div class="bar-inner" style="width:{{ a.pct }}%;background:#ff9510;"></div><div class="bar-text">{{ a.pct }}%</div></div></div>
+</div>
+{% endfor %}
+</div>
+
+</div>
+</div>
+
+{% comment %} STOCK {% endcomment %}
+<div class="freshCard">
+<div class="freshHeader">STOCK</div>
+
+<div class="freshBody">
+
+<div class="freshChartContainer">
+    <canvas id="freshProgressChart"></canvas>
+    <div class="freshChartText">{{ stock.overall_pct }}% of Overall Inventory</div>
+    <div class="freshChartSubText">
+        (Inventory: {{ stock.total|intcomma }} / Meter: {{ kpi_meter|intcomma }})
+    </div>
+</div>
+
+<table width="100%">
+<tr><td class="freshLabelCell">Fresh :</td><td class="freshValueCell">{{ stock.fresh|intcomma }}</td></tr>
+<tr><td colspan="2"><div class="bar-outer"><div class="bar-inner" style="width:{{ stock.pct_fresh }}%;background:#4caf50;"></div><div class="bar-text">{{ stock.pct_fresh }}%</div></div></td></tr>
+
+<tr><td class="freshLabelCell">Others :</td><td class="freshValueCell">{{ stock.others|intcomma }}</td></tr>
+<tr><td colspan="2"><div class="bar-outer"><div class="bar-inner" style="width:{{ stock.pct_others }}%;background:#2196f3;"></div><div class="bar-text">{{ stock.pct_others }}%</div></div></td></tr>
+
+<tr><td class="freshLabelCell">Total :</td><td class="freshValueCell">{{ stock.total|intcomma }}</td></tr>
+<tr><td colspan="2"><div class="bar-outer"><div class="bar-inner" style="width:{{ stock.pct_cancel }}"></div><div class="bar-text">{{ stock.pct_cancel }}%</div></div></td></tr>
+
+<tr><td class="freshLabelCell">Soldout :</td><td class="freshValueCell">{{ stock.sold|intcomma }}</td></tr>
+<tr><td colspan="2"><div class="bar-outer"><div class="bar-inner" style="width:{{ stock.pct_sold }}%;background:#e91e63;"></div><div class="bar-text">{{ stock.pct_sold }}%</div></div></td></tr>
+
+<tr><td class="freshLabelCell"><b>Net :</b></td><td class="freshValueCell"><b>{{ stock.net|intcomma }}</b></td></tr>
+</table>
+
+<div class="sectionBox">
+<div class="sectionTitle grade">GRADE WISE</div>
+{% for g in stock_grade_list %}
+<div class="rowBlock">
+    <div class="rowTop">
+        <div class="rowLabel">{{ g.grade }}</div>
+        <div class="rowValue">{{ g.value|intcomma }}</div>
+    </div>
+    <div class="rowBar">
+        <div class="bar-outer">
+            <div class="bar-inner" style="width:{{ g.pct }}%;background:#4caf50;"></div>
+            <div class="bar-text">{{ g.pct }}%</div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+</div>
+
+
+<div class="sectionBox">
+<div class="sectionTitle manager">MANAGER WISE</div>
+{% for m in stock_manager_list %}
+<div class="rowBlock">
+    <div class="rowTop">
+        <div class="rowLabel">{{ m.manager }}</div>
+        <div class="rowValue">{{ m.value|intcomma }}</div>
+    </div>
+    <div class="rowBar">
+        <div class="bar-outer">
+            <div class="bar-inner" style="width:{{ m.pct }}%;background:#2196f3;"></div>
+            <div class="bar-text">{{ m.pct }}%</div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+</div>
+
+
+<div class="sectionBox">
+<div class="sectionTitle aging">AGING WISE</div>
+{% for a in stock_aging_list %}
+<div class="rowBlock">
+    <div class="rowTop">
+        <div class="rowLabel">{{ a.age }}</div>
+        <div class="rowValue">{{ a.value|intcomma }}</div>
+    </div>
+    <div class="rowBar">
+        <div class="bar-outer">
+            <div class="bar-inner" style="width:{{ a.pct }}%;background:#ff9510;"></div>
+            <div class="bar-text">{{ a.pct }}%</div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+</div>
+
+
+</div>
+</div>
+
+{% comment %} SAMPLE {% endcomment %}
+<div class="freshCard">
+<div class="freshHeader">SAMPLE</div>
+
+<div class="freshBody">
+
+<div class="freshChartContainer">
+    <canvas id="freshProgressChart"></canvas>
+    <div class="freshChartText">{{ sample.overall_pct }}% of Overall Inventory</div>
+    <div class="freshChartSubText">
+        (Inventory: {{ sample.total|intcomma }} / Meter: {{ kpi_meter|intcomma }})
+    </div>
+</div>
+
+<table width="100%">
+<tr><td class="freshLabelCell">Sample :</td><td class="freshValueCell">{{ sample.sample|intcomma }}</td></tr>
+<tr><td colspan="2"><div class="bar-outer"><div class="bar-inner" style="width:{{ sample.pct_open }}"></div><div class="bar-text">{{ sample.pct_open }}%</div></div></td></tr>
+
+<tr><td class="freshLabelCell"></td><td class="freshValueCell">&nbsp;</td></tr>
+<tr><td colspan="2"><div class="bar-outer"><div class="bar-inner" style="width:{{ sample.pct_close }}"></div><div class="bar-text">{{ sample.pct_close }}%</div></div></td></tr>
+
+<tr><td class="freshLabelCell"></td><td class="freshValueCell">&nbsp;</td></tr>
+<tr><td colspan="2"><div class="bar-outer"><div class="bar-inner" style="width:{{ sample.pct_cancel }}"></div><div class="bar-text">{{ sample.pct_cancel }}%</div></div></td></tr>
+
+<tr><td class="freshLabelCell"></td><td class="freshValueCell">&nbsp;</td></tr>
+<tr><td colspan="2"><div class="bar-outer"><div class="bar-inner" style="width:{{ sample.pct_rfan }}"></div><div class="bar-text">{{ sample.pct_rfan }}%</div></div></td></tr>
+
+<tr><td class="freshLabelCell"><b></b></td><td class="freshValueCell"><b>&nbsp;</b></td></tr>
+</table>
+
+<div class="sectionBox">
+<div class="sectionTitle grade">GRADE WISE</div>
+{% for g in sample_grade_list %}
+<div class="rowBlock">
+    <div class="rowTop">
+        <div class="rowLabel">{{ g.grade }}</div>
+        <div class="rowValue">{{ g.value|intcomma }}</div>
+    </div>
+    <div class="rowBar">
+        <div class="bar-outer">
+            <div class="bar-inner" style="width:{{ g.pct }}%;background:#4caf50;"></div>
+            <div class="bar-text">{{ g.pct }}%</div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+</div>
+
+<div class="sectionBox">
+<div class="sectionTitle manager">MANAGER WISE</div>
+{% for m in sample_manager_list %}
+<div class="rowBlock">
+    <div class="rowTop">
+        <div class="rowLabel">{{ m.manager }}</div>
+        <div class="rowValue">{{ m.value|intcomma }}</div>
+    </div>
+    <div class="rowBar">
+        <div class="bar-outer">
+            <div class="bar-inner" style="width:{{ m.pct }}%;background:#2196f3;"></div>
+            <div class="bar-text">{{ m.pct }}%</div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+</div>
+
+<div class="sectionBox">
+<div class="sectionTitle aging">AGING WISE</div>
+{% for a in sample_aging_list %}
+<div class="rowBlock">
+    <div class="rowTop">
+        <div class="rowLabel">{{ a.age }}</div>
+        <div class="rowValue">{{ a.value|intcomma }}</div>
+    </div>
+    <div class="rowBar">
+        <div class="bar-outer">
+            <div class="bar-inner" style="width:{{ a.pct }}%;background:#ff9510;"></div>
+            <div class="bar-text">{{ a.pct }}%</div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+</div>
+
+</div>
+</div>
+
+{% comment %} RETURN {% endcomment %}
+<div class="freshCard">
+<div class="freshHeader">RETURN</div>
+
+<div class="freshBody">
+
+<div class="freshChartContainer">
+    <canvas id="freshProgressChart"></canvas>
+    <div class="freshChartText">{{ sr.overall_pct }}% of Overall Inventory</div>
+    <div class="freshChartSubText">
+        (Inventory: {{ sr.total|intcomma }} / Meter: {{ kpi_meter|intcomma }})
+    </div>
+</div>
+
+<table width="100%">
+<tr><td class="freshLabelCell">Return :</td><td class="freshValueCell">{{ sr.sample|intcomma }}</td></tr>
+<tr><td colspan="2"><div class="bar-outer"><div class="bar-inner" style="width:{{ sr.pct_open }}"></div><div class="bar-text">{{ sr.pct_open }}%</div></div></td></tr>
+
+<tr><td class="freshLabelCell"></td><td class="freshValueCell">&nbsp;</td></tr>
+<tr><td colspan="2"><div class="bar-outer"><div class="bar-inner" style="width:{{ sr.pct_close }}"></div><div class="bar-text">{{ sr.pct_close }}%</div></div></td></tr>
+
+<tr><td class="freshLabelCell"></td><td class="freshValueCell">&nbsp;</td></tr>
+<tr><td colspan="2"><div class="bar-outer"><div class="bar-inner" style="width:{{ sr.pct_cancel }}"></div><div class="bar-text">{{ sr.pct_cancel }}%</div></div></td></tr>
+
+<tr><td class="freshLabelCell"></td><td class="freshValueCell">&nbsp;</td></tr>
+<tr><td colspan="2"><div class="bar-outer"><div class="bar-inner" style="width:{{ sr.pct_rfan }}"></div><div class="bar-text">{{ sr.pct_rfan }}%</div></div></td></tr>
+
+<tr><td class="freshLabelCell"><b></b></td><td class="freshValueCell"><b>&nbsp;</b></td></tr>
+</table>
+
+<div class="sectionBox">
+<div class="sectionTitle grade">GRADE WISE</div>
+{% for g in sales_return_grade_list %}
+<div class="rowBlock">
+    <div class="rowTop">
+        <div class="rowLabel">{{ g.grade }}</div>
+        <div class="rowValue">{{ g.value|intcomma }}</div>
+    </div>
+    <div class="rowBar">
+        <div class="bar-outer">
+            <div class="bar-inner" style="width:{{ g.pct }}%;background:#4caf50;"></div>
+            <div class="bar-text">{{ g.pct }}%</div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+</div>
+
+<div class="sectionBox">
+<div class="sectionTitle manager">MANAGER WISE</div>
+{% for m in sales_return_manager_list %}
+<div class="rowBlock">
+    <div class="rowTop">
+        <div class="rowLabel">{{ m.manager }}</div>
+        <div class="rowValue">{{ m.value|intcomma }}</div>
+    </div>
+    <div class="rowBar">
+        <div class="bar-outer">
+            <div class="bar-inner" style="width:{{ m.pct }}%;background:#2196f3;"></div>
+            <div class="bar-text">{{ m.pct }}%</div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+</div>
+
+<div class="sectionBox">
+<div class="sectionTitle aging">AGING WISE</div>
+{% for a in sales_return_aging_list %}
+<div class="rowBlock">
+    <div class="rowTop">
+        <div class="rowLabel">{{ a.age }}</div>
+        <div class="rowValue">{{ a.value|intcomma }}</div>
+    </div>
+    <div class="rowBar">
+        <div class="bar-outer">
+            <div class="bar-inner" style="width:{{ a.pct }}%;background:#ff9510;"></div>
+            <div class="bar-text">{{ a.pct }}%</div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+</div>
+
+</div>
+</div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    new Chart(document.getElementById("freshProgressChart"), {
+        type: "doughnut",
+        data: {
+            datasets: [{
+                data: [{{ fresh.total }}, {{ kpi_meter }} - {{ fresh.total }}],
+                backgroundColor: ["#4caf50","#e0e0e0"],
+                borderWidth:0
+            }]
+        },
+        options: { cutout:"72%", plugins:{ legend:{ display:false } } }
+    });
+});
+</script>

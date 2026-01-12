@@ -1,0 +1,229 @@
+{% load humanize %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+  canvas[id^="ProgressChart"]{
+    width:76px !important;
+    height:76px !important;
+    max-width:76px !important;
+    max-height:76px !important;
+    min-width:76px !important;
+    min-height:76px !important;
+    margin:auto;
+    display:block;
+  }
+  .fabricMainWrapper { display:flex; flex-direction:column; gap:12px; }
+  .unitBlock { width: 100% }
+  .unitHeaderBar{
+      margin:0 0 6px 0;
+      padding:4px 26px;
+      background:linear-gradient(90deg,#e0f2fe,#f9fafb);
+      text-align:center;
+      font-weight:700;
+      font-size:16px;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+      color:#0f172a;
+  }
+  .fabricCardContainer {
+      display:flex;
+      flex-wrap:nowrap;
+      justify-content:center;
+      align-items:stretch;
+      gap:14px;
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  }
+  .fabricChartContainer,
+  .fabricCard {
+      height:auto;
+      border-radius:14px;
+      background-color:#f1f5f9;
+      box-shadow:0 8px 15px rgba(15,23,42,.06);
+      border:1px solid #e2e8f0;
+      padding:10px 12px;
+      box-sizing:border-box;
+      display:flex;
+      flex-direction:column;
+      overflow:hidden;
+      position:relative;
+      transition:box-shadow .18s ease,transform .18s ease;
+  }
+  .fabricChartContainer{
+      background:linear-gradient(135deg,#ffffff 0%,#f7fafc 100%);
+      text-align:center;
+      width:200px;
+  }
+  .fabricChartText{
+      margin-top:8px;font-size:16px;font-weight:600;color:#1e293b;
+  }
+  .fabricChartSubText{
+      font-weight:500;font-size:13px;color:#64748b;margin-top:2px;
+  }
+  .fabricChartContainer .fabricAmount{
+      margin-top:6px;font-size:15px;font-weight:700;color:#db2777;
+  }
+  .fabricHeadChartText,
+  .fabricMkt-HeadChartText{
+      margin:0 18px 8px 18px;padding:4px 8px;font-size:13px;
+      text-align:center;font-weight:700;color:#0f172a;border-radius:999px;
+      text-transform:uppercase;letter-spacing:.04em;
+      box-shadow:inset 0 0 0 1px rgba(148,163,184,.45);
+  }
+  .fabricHeadChartText{ background:linear-gradient(135deg,#8bd0ff,#f9fafb); }
+  .fabricMkt-HeadChartText{ background:linear-gradient(135deg,#bfffbd,#f2fdf4); }
+
+  .fabricCardRow{ display:flex; gap:10px; margin-top:4px; }
+  .fabricSub{ overflow-y:auto; overflow-x:hidden; padding-right:10px; line-height:1; }
+   .fabricSubTitle{
+      font-size:12px;font-weight:700;color:#475569;margin:0 0 4px 2px;
+      text-transform:uppercase;letter-spacing:.04em;
+  }
+  .fabricBody table,.fabricMkt-Body table,.fabricSub table{
+      width:100%;border-collapse:collapse;table-layout:auto;
+  }
+  .fabricLabelCell{
+      text-align:left;color:#334155;white-space:nowrap;padding:2px 6px 2px 6px;
+  }
+  .fabricValueCell{
+      font-weight:600;text-align:right;color:#111827;white-space:nowrap;
+      padding:2px 6px;
+  }
+  .bar-outer{
+      width:100%;height:12px;background:#e5e7eb;border-radius:999px;
+      overflow:hidden;position:relative;margin-top:3px;
+  }
+  .bar-inner{
+      height:100%;border-radius:999px;background:linear-gradient(90deg,#22c55e,#16a34a);
+  }
+  .bar-text{
+      position:absolute;inset:0;text-align:center;line-height:12px;
+      font-size:10px;color:#020617;font-weight:600;
+      text-shadow:0 0 2px rgba(255,255,255,.7);
+  }
+
+  /* --- responsiveness, only overrides on small screens --- */
+  @media (max-width: 900px) {
+    .fabricCardContainer{
+      flex-wrap:wrap;
+    }
+    .fabricCardRow{
+      flex-direction:column;
+    }
+  }
+</style>
+
+<div class="fabricMainWrapper">
+
+{% for u in units %}
+<div class="unitBlock">
+
+<div class="unitHeaderBar">{{ u.unit }}</div>
+
+<div class="fabricCardContainer">
+
+<!-- CHART -->
+<div class="fabricChartContainer">
+  <canvas id="chart{{ forloop.counter }}"></canvas>
+  <div class="fabricChartText">{{ u.percent }}% of Overall Month</div>
+  <div class="fabricChartSubText">
+    (Current Month: {{ u.curr_total|intcomma }} / Overall Monthly: {{ u.overall|intcomma }})
+  </div>
+  <div class="fabricAmount">
+    Approx Pkr Amount {{ u.amount|intcomma }} @ {{ u.rate }} P.Kg
+  </div>
+</div>
+
+<!-- PREVIOUS DAY -->
+<div class="fabricCard">
+<div class="fabricHeadChartText">PREVIOUS DAY</div>
+<div class="fabricCardRow">
+
+<div class="fabricSub">
+<div class="fabricSubTitle">Reason wise</div>
+<table>
+{% for r in u.prev_reason %}
+<tr>
+<td class="fabricLabelCell">{{ r.reason }}</td>
+<td class="fabricValueCell">{{ r.qty|intcomma }}</td>
+</tr>
+<tr><td colspan="2">
+<div class="bar-outer">
+<div class="bar-inner" style="width:{{ r.per }}%"></div>
+<div class="bar-text">{{ r.per }}%</div>
+</div>
+</td></tr>
+{% endfor %}
+</table>
+</div>
+
+<div class="fabricSub">
+<div class="fabricSubTitle">Manager wise</div>
+<table>
+{% for m in u.prev_manager %}
+<tr>
+<td class="fabricLabelCell">{{ m.manager_name }}</td>
+<td class="fabricValueCell">{{ m.qty|intcomma }}</td>
+<td class="fabricValueCell" style="color:red">{{ m.per }}%</td>
+</tr>
+{% endfor %}
+</table>
+</div>
+
+</div>
+</div>
+
+<!-- CURRENT MONTH -->
+<div class="fabricCard">
+<div class="fabricMkt-HeadChartText">CURRENT MONTH</div>
+<div class="fabricCardRow">
+
+<div class="fabricSub">
+<div class="fabricSubTitle">Reason wise</div>
+<table>
+{% for r in u.curr_reason %}
+<tr>
+<td class="fabricLabelCell">{{ r.reason }}</td>
+<td class="fabricValueCell">{{ r.qty|intcomma }}</td>
+</tr>
+<tr><td colspan="2">
+<div class="bar-outer">
+<div class="bar-inner" style="width:{{ r.per }}%"></div>
+<div class="bar-text">{{ r.per }}%</div>
+</div>
+</td></tr>
+{% endfor %}
+</table>
+</div>
+
+<div class="fabricSub">
+<div class="fabricSubTitle">Manager wise</div>
+<table>
+{% for m in u.curr_manager %}
+<tr>
+<td class="fabricLabelCell">{{ m.manager_name }}</td>
+<td class="fabricValueCell">{{ m.qty|intcomma }}</td>
+<td class="fabricValueCell" style="color:red">{{ m.per }}%</td>
+</tr>
+{% endfor %}
+</table>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+{% endfor %}
+
+</div>
+
+<script>
+{% for u in units %}
+new Chart(document.getElementById("chart{{ forloop.counter }}"),{
+  type:"doughnut",
+  data:{datasets:[{data:[{{ u.curr_total }},{{ u.balance }}],
+  backgroundColor:["#22c55e","#e5e7eb"],borderWidth:0}]},
+  options:{cutout:"75%",plugins:{legend:{display:false}}}
+});
+{% endfor %}
+</script>

@@ -1,0 +1,196 @@
+{% load humanize %}
+
+<style>
+body{background:#f4f6f9}
+.cards{display:flex;gap:26px;justify-content:center;flex-wrap:wrap}
+
+.export-card-wrapper{width:480px}
+.export-title{
+    background:linear-gradient(135deg,#444,#222);
+    color:#fff;font-weight:700;font-size:19px;
+    text-align:center;padding:12px 0;
+    border-radius:12px 12px 0 0;
+}
+.cardInv{
+    background:#eceef1;border-radius:0 0 12px 12px;
+    box-shadow:0 6px 14px rgba(0,0,0,.18);
+    padding-bottom:20px;
+}
+
+.chart-container{text-align:center;margin:22px 0}
+.chart-container canvas{
+    width:90px !important;
+    height:90px !important;
+    margin:0 auto;
+    display:block;
+}
+
+.chart-container b{font-size:17px}
+.stat-line{font-weight:600;margin-top:6px;color:#333}
+
+.valueCell{font-size:30px;font-weight:700;text-align:center}
+.valueCelltxt{font-size:21px;font-weight:700;text-align:center;color:#b10000}
+
+.mgr-row{margin:10px 16px}
+.mgr-name{display:flex;justify-content:space-between;font-weight:600}
+.bar-outer{background:#777;border-radius:20px;height:14px;margin-top:4px}
+.bar-inner{height:14px;border-radius:20px;font-size:12px;font-weight:700;text-align:center}
+
+.cardHeader{
+    background:#714b67;color:white;font-weight:700;
+    font-size:18px;padding:9px;text-align:center;
+    border-radius:6px;margin:10px 12px
+}
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<div class="cards">
+
+<!-- ================= EXPORT CARD ================= -->
+<div class="export-card-wrapper">
+<div class="export-title">EXPORT</div>
+<div class="cardInv">
+
+<div class="chart-container">
+<b>Order In Hand</b>
+<canvas id="chartExport" width="90" height="90"></canvas>
+<div class="stat-line">{{ export.percentage }}% of Overall Order In Hand</div>
+<div class="stat-line">({{ export.curr_dispatch }} mtr / {{ export.total_plan }} mtr)</div>
+</div>
+
+<div class="mgr-row">
+<div class="mgr-name">Matched Fabric Inventory <span>{{ export.inventory }}</span></div>
+<div class="bar-outer">
+<div class="bar-inner" style="width:{{ export.inv_per }}%;background:#ddd60a">{{ export.inv_per }}%</div>
+</div>
+</div>
+
+<table width="100%">
+<tr><td class="valueCell">{{ export.curr_dispatch }} MTR</td></tr>
+<tr><td class="valueCell">{{ export.amt_pkr }} PKR</td></tr>
+<tr><td class="valueCell">{{ export.amt }} @{{ export.d_rate }} $</td></tr>
+<tr><td class="valueCell">{{ export.avg_rate }} AVG RATE</td></tr>
+<tr><td class="valueCelltxt">BAL TO DYE {{ export.btd }}</td></tr>
+<tr><td class="valueCelltxt">{{ export.days }} DAYS</td></tr>
+</table>
+
+<div class="cardHeader">MANAGER WISE</div>
+{% for m in export.managers %}
+<div class="mgr-row">
+<div class="mgr-name">{{ m.manager_name }} <span>{{ m.dispatch_exp }}</span></div>
+<div class="bar-outer">
+<div class="bar-inner" style="width:{{ m.per }}%;background:#ddd60a">{{ m.per }}%</div>
+</div>
+</div>
+{% endfor %}
+
+</div>
+</div>
+
+<!-- ================= LOCAL CARD ================= -->
+<div class="export-card-wrapper">
+<div class="export-title">LOCAL</div>
+<div class="cardInv">
+
+<div class="chart-container">
+<b>Order In Hand</b>
+<canvas id="chartLocal" width="90" height="90"></canvas>
+<div class="stat-line">{{ local.percentage }}% of Overall Order In Hand</div>
+<div class="stat-line">({{ local.curr_dispatch }} mtr / {{ local.total_plan }} mtr)</div>
+</div>
+
+<div class="mgr-row">
+<div class="mgr-name">Matched Fabric Inventory <span>{{ local.inventory }}</span></div>
+<div class="bar-outer">
+<div class="bar-inner" style="width:{{ local.inv_per }}%;background:#ddd60a">{{ local.inv_per }}%</div>
+</div>
+</div>
+
+<table width="100%">
+<tr><td class="valueCell">{{ local.curr_dispatch }} MTR</td></tr>
+<tr><td class="valueCell">{{ local.amt_pkr }} PKR</td></tr>
+<tr><td class="valueCell">{{ local.amt }} @{{ local.d_rate }} $</td></tr>
+<tr><td class="valueCell">{{ local.avg_rate }} AVG RATE</td></tr>
+<tr><td class="valueCelltxt">BAL TO DYE {{ local.btd }}</td></tr>
+<tr><td class="valueCelltxt">{{ local.days }} DAYS</td></tr>
+</table>
+
+<div class="cardHeader">MANAGER WISE</div>
+{% for m in local.managers %}
+<div class="mgr-row">
+<div class="mgr-name">{{ m.manager_name }} <span>{{ m.dispatch_exp }}</span></div>
+<div class="bar-outer">
+<div class="bar-inner" style="width:{{ m.per }}%;background:#ddd60a">{{ m.per }}%</div>
+</div>
+</div>
+{% endfor %}
+
+</div>
+</div>
+
+<!-- ================= TOTAL CARD ================= -->
+<div class="export-card-wrapper">
+<div class="export-title">TOTAL</div>
+<div class="cardInv">
+
+<div class="chart-container">
+<b>Order In Hand</b>
+<canvas id="chartTotal" width="90" height="90"></canvas>
+<div class="stat-line">{{ total.percentage }}% of Overall Order In Hand</div>
+<div class="stat-line">Total Export/Local Order In Hand: {{ total.total_plan }} mtr</div>
+</div>
+
+<div class="mgr-row">
+<div class="mgr-name">Matched Fabric Inventory <span>{{ total.inventory }}</span></div>
+<div class="bar-outer">
+<div class="bar-inner" style="width:{{ total.inv_per }}%;background:#ddd60a">{{ total.inv_per }}%</div>
+</div>
+</div>
+
+<table width="100%">
+<tr><td class="valueCell">{{ total.curr_dispatch }} MTR</td></tr>
+<tr><td class="valueCell">{{ total.amt_pkr }} PKR</td></tr>
+<tr><td class="valueCell">{{ total.amt }} @{{ total.d_rate }} $</td></tr>
+<tr><td class="valueCell">{{ total.avg_rate }} AVG RATE</td></tr>
+<tr><td class="valueCelltxt">BAL TO DYE {{ total.btd }}</td></tr>
+<tr><td class="valueCelltxt">{{ total.days }} DAYS</td></tr>
+</table>
+
+<div class="cardHeader">MANAGER WISE</div>
+{% for m in total.managers %}
+<div class="mgr-row">
+<div class="mgr-name">{{ m.manager_name }} <span>{{ m.dispatch_exp }}</span></div>
+<div class="bar-outer">
+<div class="bar-inner" style="width:{{ m.per }}%;background:#ddd60a">{{ m.per }}%</div>
+</div>
+</div>
+{% endfor %}
+
+</div>
+</div>
+
+</div>
+
+<script>
+function animatedDonut(id, val, total, color){
+    let ctx=document.getElementById(id)
+    let i=0
+    let chart=new Chart(ctx,{
+        type:'doughnut',
+        data:{datasets:[{data:[0,total],backgroundColor:[color,'#ddd'],borderWidth:0}]},
+        options:{cutout:'72%',plugins:{legend:{display:false}}}
+    })
+    let timer=setInterval(()=>{
+        if(i>=val){clearInterval(timer);return}
+        i+=Math.ceil(val/60)
+        chart.data.datasets[0].data=[i,total]
+        chart.update()
+    },15)
+}
+
+animatedDonut('chartExport', {{ export.curr_dispatch|cut:"," }}, {{ export.total_plan|cut:"," }}, '#00A300')
+animatedDonut('chartLocal', {{ local.curr_dispatch|cut:"," }}, {{ local.total_plan|cut:"," }}, '#0077ff')
+animatedDonut('chartTotal', {{ total.curr_dispatch|cut:"," }}, {{ 0 }}, '#ff0000')
+
+</script>

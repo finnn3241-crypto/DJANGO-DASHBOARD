@@ -8,13 +8,41 @@ from dashboard.services.Fabric_Inventory.fabric_inventory_service import (
     get_fresh_data,
     get_fresh_grade_data,
     get_fresh_manager_data,
-    get_fresh_aging_data
+    get_fresh_aging_data,
+    get_stock_data,
+    get_stock_grade_data,
+    get_stock_manager_data,
+    get_stock_aging_data,
+    get_sample_data,
+    get_sample_grade_data,
+    get_sample_manager_data,
+    get_sample_aging_data,
+    get_sales_return_data,
+    get_sales_return_grade_data,
+    get_sales_return_manager_data,
+    get_sales_return_aging_data
+)
+from dashboard.services.sample.sample_first import sample_first 
+from dashboard.services.sample.sample_unit import unit_dashboard_data 
+from dashboard.services.sample.top20_service import top20_data 
+
+from dashboard.services.order_in_hand.order_in_hand_exp import order_in_hand_exp
+from dashboard.services.order_in_hand.order_in_hand_loc import order_in_hand_local
+from dashboard.services.order_in_hand.order_in_hand_total import order_in_hand_total
+
+from dashboard.services.Production.production import ( warping_dashboard,
+    dyeing_dashboard, 
+    weaving_dashboard, 
+    finishing_dashboard,
+    washing_dashboard,
+    mercerize_dashboard,
+    stenter_dashboard,
+    sanfor_dashboard,
+    inspection_dashboard
 )
 
-from .services.Order_In_Hand.oih_export import (
-    get_export_dispatch_kpis
 
-)
+
 
 
 def home(request):
@@ -52,18 +80,56 @@ def fabric(request):
     data["fresh_manager_list"] = get_fresh_manager_data()
     data["fresh_aging_list"] = get_fresh_aging_data()
 
-    return render(request, "dashboard/fabric_inventory/dashboard.html", data)
+    # STOCK Card
+    data.update(get_stock_data())
+    data["stock_grade_list"] = get_stock_grade_data()
+    data["stock_manager_list"] = get_stock_manager_data()
+    data["stock_aging_list"] = get_stock_aging_data()
 
-def orderInHand(request):
-    data = {}
-    data.update( get_export_dispatch_kpis() )
-    return render(request, "dashboard/order_in_hand/home.html", data)
+    # SAMPLE Card
+    data.update(get_sample_data())
+    data["sample_grade_list"] = get_sample_grade_data()
+    data["sample_manager_list"] = get_sample_manager_data()
+    data["sample_aging_list"] = get_sample_aging_data()
 
-def production(request):
-    data = {}
-    # Combine data from both services
+    # SALES RETURN Card
+    data.update(get_sales_return_data())
+    data["sales_return_grade_list"] = get_sales_return_grade_data()
+    data["sales_return_manager_list"] = get_sales_return_manager_data()
+    data["sales_return_aging_list"] = get_sales_return_aging_data()
 
-    return render(request, "dashboard/production/warping.html", data)
+
+    return render(request, "dashboard/fabric_inventory/fabric_kpis.html", data)
+
+def sample(request):
+    context = sample_first()
+    context["units"] = unit_dashboard_data()
+    context["top20"] = top20_data()
+    return render(request, "dashboard/sample/samplefirst.html", context)
+
+
+def oih(request):
+    context = {
+        "export": order_in_hand_exp(),
+        "local": order_in_hand_local(),
+        "total": order_in_hand_total()
+    }
+    return render(request, "dashboard/OIH/order_in_hand.html", context)
+
+
+def prod(request):
+    context = {
+        "warp": warping_dashboard(),
+        "dye": dyeing_dashboard(),
+        "weav": weaving_dashboard(),
+        "sing": finishing_dashboard(),
+        "wash": washing_dashboard(),
+        "mercerz": mercerize_dashboard(),
+        "stent": stenter_dashboard(),
+        "sanfor": sanfor_dashboard(),
+        "inspec":  inspection_dashboard()
+    }
+    return render(request, "dashboard/Production/Production.html", context)
 
 def yarn(request):
     data = {}

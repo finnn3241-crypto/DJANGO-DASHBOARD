@@ -1,0 +1,147 @@
+{% load humanize %}
+<style>
+.SideBySideWrap{
+  display:flex;
+  gap:14px;
+  justify-content:center;
+  font-family:Segoe UI,Roboto,sans-serif;
+}
+
+.fabricCardPD,
+.fabricCardMN{
+  flex:1;
+  max-width:580px;
+  background:#f1f5f9;
+  border-radius:14px;
+  border:1px solid #e2e8f0;
+  padding:12px;
+}
+
+.fabricHeadChartTextPD{
+  background:linear-gradient(135deg,#8bd0ff,#f9fafb);
+}
+.fabricHeadChartTextMN{
+  background:linear-gradient(135deg,#c7f9cc,#e9ffef);
+}
+
+.fabricHeadChartTextPD,
+.fabricHeadChartTextMN{
+  text-align:center;
+  font-weight:700;
+  padding:6px;
+  border-radius:999px;
+  margin-bottom:8px;
+}
+
+.sectionTitlePD{
+  font-size:12px;
+  font-weight:700;
+  margin:6px 0;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+}
+td{
+  padding:4px;
+}
+
+.pdDividerPD{
+  border-top:1px dashed #cbd5f5;
+  margin:6px 0;
+}
+</style>
+<div class="SideBySideWrap">
+
+<div class="fabricCardPD">
+<div class="fabricHeadChartTextPD">PREVIOUS DAY</div>
+
+<table>
+{% for r in prev_day_reason %}
+<tr>
+<td>{{ r.reason }}</td>
+<td>Qty {{ r.qty|intcomma }}</td>
+<td>Rs. {{ r.amount|intcomma }} @ {{ rate }}</td>
+<td style="color:red">{{ r.per }}%</td>
+</tr>
+{% endfor %}
+</table>
+
+<div class="pdDividerPD"></div>
+
+<div class="sectionTitlePD">MANAGER WISE</div>
+<table>
+{% for m in prev_day_manager %}
+<tr>
+  <td>{{ m.manager_name }}</td>
+  <td>Qty {{ m.qty|intcomma }}</td>
+  <td>Rs. {{ m.amount|intcomma }} @ {{ rate }} P.Kg</td>
+  <td style="color:red">{{ m.per }}%</td>
+</tr>
+{% endfor %}
+</table>
+
+<div class="pdDividerPD"></div>
+
+<div class="sectionTitlePD">CATEGORY WISE</div>
+<table>
+{% for c in prev_day_category %}
+<tr>
+  <td>{{ c.category }}</td>
+  <td>Qty {{ c.qty|intcomma }}</td>
+  <td>Rs. {{ c.amount|intcomma }} @ {{ rate }} P.Kg</td>
+  <td style="color:red">{{ c.per }}%</td>
+</tr>
+{% endfor %}
+</table>
+</div>
+
+<div class="fabricCardMN">
+<div class="fabricHeadChartTextMN">CURRENT MONTH</div>
+
+<table>
+{% for r in month_reason %}
+<tr>
+<td>{{ r.reason }}</td>
+<td>Qty {{ r.qty|intcomma }}</td>
+<td>Rs. {{ r.amount|intcomma }} @ {{ rate }}</td>
+<td style="color:red">{{ r.per }}%</td>
+</tr>
+{% endfor %}
+</table>
+
+<div class="pdDividerPD"></div>
+
+<div class="sectionTitlePD">MANAGER WISE</div>
+<table>
+{% for m in month_manager %}
+<tr>
+  <td>{{ m.manager_name }}</td>
+  <td>Qty {{ m.qty|intcomma }}</td>
+  <td>Rs. {{ m.amount|intcomma }} @ {{ rate }} P.Kg</td>
+  <td style="color:red">{{ m.per }}%</td>
+</tr>
+{% endfor %}
+</table>
+
+<div class="pdDividerPD"></div>
+
+<div class="sectionTitlePD">CATEGORY WISE</div>
+<table>
+{% for c in month_category %}
+<tr>
+  <td>{{ c.category }}</td>
+  <td>Qty {{ c.qty|intcomma }}</td>
+  <td>Rs. {{ c.amount|intcomma }} @ {{ rate }} P.Kg</td>
+  <td style="color:red">{{ c.per }}%</td>
+</tr>
+{% endfor %}
+</table>
+</div>
+
+</div>
+
+{% include "dashboard/sample/unit_dashboard.html" %}
+
+{% include "dashboard/sample/top20.html" %}
