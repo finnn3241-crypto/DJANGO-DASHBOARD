@@ -1,0 +1,720 @@
+{% load humanize %}
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+        body { background-color: #ffffff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        
+        /* Main Container */
+        .dashboard-section { max-width: 1400px; margin: 20px auto; text-align: center; }
+        .section-title { font-weight: bold; font-size: 24px; margin-bottom: 20px; text-transform: uppercase; border-bottom: 1px solid #ddd; padding-bottom: 10px; }
+        
+        .cardContainer { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; }
+
+        /* Card Styling */
+        .cardInv { width: 420px; background-color: #eceef1; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); overflow: hidden; }
+        .cardHeader { background-color: #714b67; color: white; font-weight: 700; font-size: 20px; padding: 15px; text-align: center; text-transform: uppercase; }
+        
+        .cardBody { padding: 20px; }
+        .cardsubheader { color: #000; font-size: 18px; font-weight: 700; text-align: left; margin-bottom: 10px; }
+        
+        /* Yellow Highlight Boxes */
+        .large-value-box { 
+            background: #fbce4a; 
+            background: linear-gradient(180deg, #fbce4a 0%, #f7c12d 100%);
+            border-radius: 50px; 
+            padding: 10px 30px; 
+            font-size: 40px; 
+            font-weight: 600; 
+            text-align: right; 
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: baseline;
+            gap: 10px;
+        }
+        .large-value-box span { font-size: 20px; font-weight: 600; }
+
+        /* Monthly Table */
+        .monthly-table { width: 100%; margin-top: 10px; }
+        .monthly-table td { padding: 8px 0; font-size: 16px; font-weight: 600; vertical-align: middle; }
+        .monthly-table td.label-cell { text-align: left; width: 45%; font-weight: 400; }
+        .small-value-box { 
+            background: #fbce4a; 
+            border-radius: 20px; 
+            padding: 5px 20px; 
+            text-align: right; 
+            font-size: 30px; /* Changed from 15px to 30px */
+            font-weight: 600;
+            display: flex; /* Changed to flex to align span properly */
+            justify-content: flex-end;
+            align-items: baseline;
+            gap: 5px;
+}
+
+/* Add this new rule */
+.small-value-box span { 
+    font-size: 14px; 
+    font-weight: 600; 
+}
+        /* Progress Bar Section */
+        .progress-wrapper { margin-top: 25px; padding: 0 10px; }
+        .progress-container { width: 100%; height: 18px; background-color: #d6d6d6; border-radius: 10px; overflow: hidden; }
+        .progress-bar { height: 100%; background-color: #2196F3; transition: width 0.8s ease-in-out; }
+        .progress-text { font-size: 14px; color: #333; margin-top: 8px; text-align: center; font-weight: bold; }
+        
+        /* Legend */
+        .legend { display: flex; justify-content: center; gap: 15px; margin-top: 10px; font-size: 12px; color: #666; }
+        .legend-item { display: flex; align-items: center; gap: 5px; }
+        .legend-box { width: 12px; height: 12px; border-radius: 2px; }
+        .blue-box { background-color: #2196F3; }
+        .grey-box { background-color: #d6d6d6; border: 1px solid #ccc; }
+    </style>
+</head>
+<body>
+
+<div class="dashboard-section">
+    <div class="section-title">Warping</div>
+    
+    <div class="cardContainer">
+        <div class="cardInv">
+            <div class="cardHeader">OLD WARPING</div>
+            <div class="cardBody">
+                <div class="cardsubheader">Previous Day</div>
+                <div class="large-value-box">
+                    {{ warp.old_prev_day}} <span>Mtr</span>
+                </div>
+
+                <div class="cardsubheader">Monthly</div>
+                <table class="monthly-table">
+                    <tr>
+                        <td class="label-cell">Current Month :</td>
+                        <td><span class="small-value-box">{{ warp.old_current_month }}</span></td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">Projected Month :</td>
+                        <td><span class="small-value-box">{{ warp.old_projected_month }}</span></td>
+                    </tr>
+                </table>
+
+                <div class="progress-wrapper">
+                    <div class="progress-container">
+                        <div class="progress-bar" style="width: {{ warp.old_progress }}%;"></div>
+                    </div>
+                    <div class="progress-text">{{ warp.old_progress }}% Completed</div>
+                    <div class="legend">
+                        <div class="legend-item"><div class="legend-box blue-box"></div> Current Month</div>
+                        <div class="legend-item"><div class="legend-box grey-box"></div> Projected Month</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="cardInv">
+            <div class="cardHeader">NEW WARPING</div>
+            <div class="cardBody">
+                <div class="cardsubheader">Previous Day</div>
+                <div class="large-value-box">
+                    {{ warp.new_prev_day }} <span>Mtr</span>
+                </div>
+
+                <div class="cardsubheader">Monthly</div>
+                <table class="monthly-table">
+                    <tr>
+                        <td class="label-cell">Current Month :</td>
+                        <td><span class="small-value-box">{{ warp.new_current_month }}</span></td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">Projected Month :</td>
+                        <td><span class="small-value-box">{{ warp.new_projected_month }}</span></td>
+                    </tr>
+                </table>
+
+                <div class="progress-wrapper">
+                    <div class="progress-container">
+                        <div class="progress-bar" style="width: {{ warp.new_progress }}%;"></div>
+                    </div>
+                    <div class="progress-text">{{ warp.new_progress }}% Completed</div>
+                    <div class="legend">
+                        <div class="legend-item"><div class="legend-box blue-box"></div> Current Month</div>
+                        <div class="legend-item"><div class="legend-box grey-box"></div> Projected Month</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="cardInv">
+            <div class="cardHeader">TOTAL WARPING</div>
+            <div class="cardBody">
+                <div class="cardsubheader">Previous Day</div>
+                <div class="large-value-box">
+                    {{ warp.tot_prev_day }} <span>Mtr</span>
+                </div>
+
+                <div class="cardsubheader">Monthly</div>
+                <table class="monthly-table">
+                    <tr>
+                        <td class="label-cell">Current Month :</td>
+                        <td><span class="small-value-box">{{ warp.tot_current_month }}</span></td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">Projected Month :</td>
+                        <td><span class="small-value-box">{{ warp.tot_projected_month }}</span></td>
+                    </tr>
+                </table>
+
+                <div class="progress-wrapper">
+                    <div class="progress-container">
+                        <div class="progress-bar" style="width: {{ warp.tot_progress }}%;"></div>
+                    </div>
+                    <div class="progress-text">{{ warp.tot_progress }}% Completed</div>
+                    <div class="legend">
+                        <div class="legend-item"><div class="legend-box blue-box"></div> Current Month</div>
+                        <div class="legend-item"><div class="legend-box grey-box"></div> Projected Month</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% comment %} DYEING  {% endcomment %}
+
+<div class="dashboard-section" style="margin-top: 50px;">
+<div class="section-title">DYEING</div>
+    
+    <div class="cardContainer">
+        <div class="cardInv">
+            <div class="cardHeader">OLD DYEING</div>
+            <div class="cardBody">
+                <div class="cardsubheader">Previous Day</div>
+                <div class="large-value-box">
+                    {{ dye.old_prev_day}} <span>Mtr</span>
+                </div>
+
+                <div class="cardsubheader">Monthly</div>
+                <table class="monthly-table">
+                    <tr>
+                        <td class="label-cell">Current Month :</td>
+                        <td><span class="small-value-box">{{ dye.old_current_month }}<span>Mtr</span></span></td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">AVG Dye Speed :</td>
+                        <td><span class="small-value-box">{{ dye.old_avg }}</span></td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">Projected Month :</td>
+                        <td><span class="small-value-box">{{ dye.old_projected_month }}<span>Mtr</span></span></td>
+                    </tr>
+                </table>
+
+                <div class="progress-wrapper">
+                    <div class="progress-container">
+                        <div class="progress-bar" style="width: {{ dye.old_progress }}%;"></div>
+                    </div>
+                    <div class="progress-text">{{ dye.old_progress }}% Completed</div>
+                    <div class="legend">
+                        <div class="legend-item"><div class="legend-box blue-box"></div> Current Month</div>
+                        <div class="legend-item"><div class="legend-box grey-box"></div> Projected Month</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="cardInv">
+            <div class="cardHeader">NEW DYEING</div>
+            <div class="cardBody">
+                <div class="cardsubheader">Previous Day</div>
+                <div class="large-value-box">
+                    {{ dye.new_prev_day }} <span>Mtr</span>
+                </div>
+
+                <div class="cardsubheader">Monthly</div>
+                <table class="monthly-table">
+                    <tr>
+                        <td class="label-cell">Current Month :</td>
+                        <td><span class="small-value-box">{{ dye.new_current_month }}<span>Mtr</span></span></td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">AVG Dye Speed :</td>
+                        <td><span class="small-value-box">{{ dye.new_avg}}</span></td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">Projected Month :</td>
+                        <td><span class="small-value-box">{{ dye.new_projected_month }}<span>Mtr</span></span></td>
+                    </tr>
+                </table>
+
+                <div class="progress-wrapper">
+                    <div class="progress-container">
+                        <div class="progress-bar" style="width: {{ dye.new_progress }}%;"></div>
+                    </div>
+                    <div class="progress-text">{{ dye.new_progress }}% Completed</div>
+                    <div class="legend">
+                        <div class="legend-item"><div class="legend-box blue-box"></div> Current Month</div>
+                        <div class="legend-item"><div class="legend-box grey-box"></div> Projected Month</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="cardInv">
+            <div class="cardHeader">TOTAL DYEING</div>
+            <div class="cardBody">
+                <div class="cardsubheader">Previous Day</div>
+                <div class="large-value-box">
+                    {{ dye.tot_prev_day }} <span>Mtr</span>
+                </div>
+
+                <div class="cardsubheader">Monthly</div>
+                <table class="monthly-table">
+                    <tr>
+                        <td class="label-cell">Current Month :</td>
+                        <td><span class="small-value-box">{{ dye.tot_current_month }}<span>Mtr</span></span></td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">AVG Dye Speed :</td>
+                        <td><span class="small-value-box">{{ dye.tot_avg }}</span></td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">Projected Month :</td>
+                        <td><span class="small-value-box">{{ dye.tot_projected_month }}<span>Mtr</span></span></td>
+                    </tr>
+                </table>
+
+                <div class="progress-wrapper">
+                    <div class="progress-container">
+                        <div class="progress-bar" style="width: {{ dye.tot_progress }}%;"></div>
+                    </div>
+                    <div class="progress-text">{{ dye.tot_progress }}% Completed</div>
+                    <div class="legend">
+                        <div class="legend-item"><div class="legend-box blue-box"></div> Current Month</div>
+                        <div class="legend-item"><div class="legend-box grey-box"></div> Projected Month</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+</div>
+</div>
+
+<div class="dashboard-section"style="margin-top: 50px;">
+<div class="section-title">Weaving</div>
+    <div class="cardContainer">
+        <div class="cardInv">
+            <div class="cardHeader">SHED 1</div>
+            <div class="cardBody">
+                <div class="cardsubheader">Previous Day</div>
+                <div class="large-value-box">
+                    {{ weav.shed1 }} <span>Mtr</span>
+                </div>
+                <table class="monthly-table">
+                    <tr>
+                        <td class="label-cell">Standard :</td>
+                        <td><span class="small-value-box">{{ weav.std_shed1 }} <span>Mtr</span></span></td>
+                    
+                    </tr>
+                    <tr>
+                        <td class="label-cell">Difference :</td>
+                        <td><span class="small-value-box" style="background: #add8e6;">{{ weav.diff_shed1 }}</span></td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">No Of Loom :</td>
+                        <td><span class="small-value-box">{{ weav.loom_count_shed1 }}</span></td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">RPM :</td>
+                        <td><span class="small-value-box">{{ weav.rpm_shed1 }}</span></td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">Efficiency :</td>
+                        <td><span class="small-value-box">{{ weav.eff_shed1 }}</span></td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">Production Efficiency :</td>
+                        <td><span class="small-value-box">{{ weav.prod_eff_shed1 }}</span></td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">Pick :</td>
+                        <td><span class="small-value-box">{{ weav.pick_shed1 }}</span></td>
+                    </tr>
+                </table>
+
+                <div class="cardsubheader" style="margin-top:20px;">Monthly</div>
+                <table class="monthly-table">
+                    <tr>
+                        <td class="label-cell">Current Month :</td>
+                        <td><span class="small-value-box">{{ weav.shed1_current_month }} <span>Mtr</span></span></td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">Projected Month :</td>
+                        <td><span class="small-value-box">{{ weav.shed1_projected_month }} <span>Mtr</span></span></td>
+                    </tr>
+                </table>
+
+                <div class="progress-wrapper">
+                    <div class="progress-container">
+                        <div class="progress-bar" style="width: {{ weav.shed1_prog }}%;"></div>
+                    </div>
+                    <div class="progress-text">{{ weav.shed1_prog }}% Completed</div>
+                    <div class="legend">
+                        <div class="legend-item"><div class="legend-box blue-box"></div> Current Month</div>
+                        <div class="legend-item"><div class="legend-box grey-box"></div> Projected Month</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="cardInv">
+            <div class="cardHeader">SHED 2</div>
+            <div class="cardBody">
+                <div class="cardsubheader">Previous Day</div>
+                <div class="large-value-box">
+                    {{ weav.shed2 }} <span>Mtr</span>
+                </div>
+                <table class="monthly-table">
+                    <tr>
+                        <td class="label-cell">Standard :</td>
+                        <td><span class="small-value-box">{{ weav.std_shed2 }} <span>Mtr</span></span></td>
+                    
+                    </tr>
+                    <tr>
+                        <td class="label-cell">Difference :</td>
+                        <td><span class="small-value-box" style="background: #add8e6;">{{ weav.diff_shed2 }}</span></td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">No Of Loom :</td>
+                        <td><span class="small-value-box">{{ weav.loom_count_shed2 }}</span></td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">RPM :</td>
+                        <td><span class="small-value-box">{{ weav.rpm_shed2 }}</span></td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">Efficiency :</td>
+                        <td><span class="small-value-box">{{ weav.eff_shed2 }}</span></td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">Production Efficiency :</td>
+                        <td><span class="small-value-box">{{ weav.prod_eff_shed2 }}</span></td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">Pick :</td>
+                        <td><span class="small-value-box">{{ weav.pick_shed2 }}</span></td>
+                    </tr>
+                </table>
+
+                <div class="cardsubheader" style="margin-top:20px;">Monthly</div>
+                <table class="monthly-table">
+                    <tr>
+                        <td class="label-cell">Current Month :</td>
+                        <td><span class="small-value-box">{{ weav.shed2_current_month }} <span>Mtr</span></span></td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">Projected Month :</td>
+                        <td><span class="small-value-box">{{ weav.shed2_projected_month }} <span>Mtr</span></span></td>
+                    </tr>
+                </table>
+
+                <div class="progress-wrapper">
+                    <div class="progress-container">
+                        <div class="progress-bar" style="width: {{ weav.shed2_prog }}%;"></div>
+                    </div>
+                    <div class="progress-text">{{ weav.shed2_prog }}% Completed</div>
+                    <div class="legend">
+                        <div class="legend-item"><div class="legend-box blue-box"></div> Current Month</div>
+                        <div class="legend-item"><div class="legend-box grey-box"></div> Projected Month</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="cardInv">
+            <div class="cardHeader">TOTAL SHED</div>
+            <div class="cardBody">
+                <div class="cardsubheader">Previous Day</div>
+                <div class="large-value-box">
+                    {{ weav.shed_t }} <span>Mtr</span>
+                </div>
+                <table class="monthly-table">
+                    <tr>
+                        <td class="label-cell">Standard :</td>
+                        <td><span class="small-value-box">{{ weav.std_shed_t }} <span>Mtr</span></span></td>
+                    
+                    </tr>
+                    <tr>
+                        <td class="label-cell">Difference :</td>
+                        <td><span class="small-value-box" style="background: #add8e6;">{{ weav.diff_shed_t }}</span></td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">No Of Loom :</td>
+                        <td><span class="small-value-box">{{ weav.loom_count_shed_t }}</span></td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">RPM :</td>
+                        <td><span class="small-value-box">{{ weav.rpm_shed_t }}</span></td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">Efficiency :</td>
+                        <td><span class="small-value-box">{{ weav.eff_shed_t }}</span></td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">Production Efficiency :</td>
+                        <td><span class="small-value-box">{{ weav.prod_eff_shed_t }}</span></td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">Pick :</td>
+                        <td><span class="small-value-box">{{ weav.pick_shed_t }}</span></td>
+                    </tr>
+                </table>
+
+                <div class="cardsubheader" style="margin-top:20px;">Monthly</div>
+                <table class="monthly-table">
+                    <tr>
+                        <td class="label-cell">Current Month :</td>
+                        <td><span class="small-value-box">{{ weav.tot_shed_current_month }} <span>Mtr</span></span></td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">Projected Month :</td>
+                        <td><span class="small-value-box">{{ weav.tot_shed_projected_month }} <span>Mtr</span></span></td>
+                    </tr>
+                </table>
+
+                <div class="progress-wrapper">
+                    <div class="progress-container">
+                        <div class="progress-bar" style="width: {{ weav.tot_shed_prog }}%;"></div>
+                    </div>
+                    <div class="progress-text">{{ weav.tot_shed_prog }}% Completed</div>
+                    <div class="legend">
+                        <div class="legend-item"><div class="legend-box blue-box"></div> Current Month</div>
+                        <div class="legend-item"><div class="legend-box grey-box"></div> Projected Month</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="dashboard-section" style="margin-top: 50px;">
+    <div class="section-title">Finishing</div>
+    <div class="cardContainer">   
+        <div class="cardInv">
+            <div class="cardHeader">SINGING</div>
+            <div class="cardBody">
+                <div class="cardsubheader">Previous Day</div>
+                <table class="monthly-table">
+                    <tr>
+                        <td class="label-cell">Old Meter :</td>
+                        <td><span class="small-value-box">{{ sing.old_prev_day }} <span>Mtr</span></span></td>
+                    </tr>
+                    <tr><td class="label-cell">New Meter :</td><td><span class="small-value-box">{{ sing.new_prev_day }} <span>Mtr</span></span></td></tr>
+                    <tr><td class="label-cell">Total Meter :</td><td><span class="small-value-box" style="background: #add8e6;">{{ sing.tot_prev_day }} <span>Mtr</span></span></td></tr>
+                    <tr><td class="label-cell">Old Rewash :</td><td><span class="small-value-box">{{ sing.old_prev_day_rw }} <span>Mtr</span></span></td></tr>
+                    <tr><td class="label-cell">New Rewash :</td><td><span class="small-value-box">{{ sing.new_prev_day_rw }} <span>Mtr</span></span></td></tr>
+                    <tr><td class="label-cell">Total Rewash :</td><td><span class="small-value-box" style="background: #add8e6;">{{ sing.tot_prev_day_rw }} <span>Mtr</span></span></td></tr>
+                </table>
+
+                <div class="cardsubheader" style="margin-top:15px;">Current Month</div>
+                <table class="monthly-table">
+                    <tr><td class="label-cell">Old Meter :</td><td><span class="small-value-box">{{ sing.old_current_month }} <span>Mtr</span></span></td></tr>
+                    <tr><td class="label-cell">New Meter :</td><td><span class="small-value-box">{{ sing.new_current_month }} <span>Mtr</span></span></td></tr>
+                    <tr><td class="label-cell">Total Meter :</td><td><span class="small-value-box" style="background: #add8e6;">{{ sing.tot_current_month }} <span>Mtr</span></span></td></tr>
+                    <tr><td class="label-cell">Old Rewash :</td><td><span class="small-value-box">{{ sing.old_curr_day_rw }} <span>Mtr</span></span></td></tr>
+                    <tr><td class="label-cell">New Rewash :</td><td><span class="small-value-box">{{ sing.new_curr_day_rw }} <span>Mtr</span></span></td></tr>
+                    <tr><td class="label-cell">Total Rewash :</td><td><span class="small-value-box" style="background: #add8e6;">{{ sing.tot_curr_day_rw }} <span>Mtr</span></span></td></tr>
+                    <tr><td class="label-cell" style="padding-top:15px;">Projected Month :</td><td style="padding-top:15px;"><span class="small-value-box">{{ sing.sing_projected_month }} <span>Mtr</span></span></td></tr>
+                </table>
+
+                <div class="progress-wrapper">
+                    <div class="progress-container"><div class="progress-bar" style="width: {{ sing.tot_progress }}%;"></div></div>
+                    <div class="progress-text">{{ sing.tot_progress }}% Completed</div>
+                    <div class="legend">
+                        <div class="legend-item"><div class="legend-box blue-box"></div> Current Month</div>
+                        <div class="legend-item"><div class="legend-box grey-box"></div> Projected Month</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="cardInv">
+            <div class="cardHeader">WASHING</div>
+            <div class="cardBody">
+                <div class="cardsubheader">Previous Day</div>
+                <table class="monthly-table">
+                    <tr><td class="label-cell">Washing :</td><td><span class="small-value-box">{{ wash.old_prev_day }} <span>Mtr</span></span></td></tr>
+                    <tr><td class="label-cell">Washing Rewash :</td><td><span class="small-value-box">{{ wash.wash_rw_prev }} <span>Mtr</span></span></td></tr>
+                    <tr><td class="label-cell">Total Washing :</td><td><span class="small-value-box" style="background: #add8e6;">{{ wash.tot_prev_day }} <span>Mtr</span></span></td></tr>
+                </table>
+
+                <div class="cardsubheader" style="margin-top:175px;">Current Month</div>
+                <table class="monthly-table">
+                    <tr><td class="label-cell">Washing :</td><td><span class="small-value-box">{{ wash.wash_curr_mn }} <span>Mtr</span></span></td></tr>
+                    <tr><td class="label-cell">Washing Rewash :</td><td><span class="small-value-box">{{ wash.wash_rw_curr_mn }} <span>Mtr</span></span></td></tr>
+                    <tr><td class="label-cell">Total Washing :</td><td><span class="small-value-box" style="background: #add8e6;">{{ wash.total_wash_curr_mn }} <span>Mtr</span></span></td></tr>
+                    <tr style="height: 180px;"><td class="label-cell" style="vertical-align: bottom;">Projected Month :</td><td style="vertical-align: bottom;"><span class="small-value-box">{{ wash.wash_projected_mn }} <span>Mtr</span></span></td></tr>
+                </table>
+
+                <div class="progress-wrapper">
+                    <div class="progress-container"><div class="progress-bar" style="width: {{ wash.tot_progress }}%;"></div></div>
+                    <div class="progress-text">{{ wash.tot_progress }}% Completed</div>
+                    <div class="legend">
+                        <div class="legend-item"><div class="legend-box blue-box"></div> Current Month</div>
+                        <div class="legend-item"><div class="legend-box grey-box"></div> Projected Month</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="cardInv">
+            <div class="cardHeader">MERCERIZE</div>
+            <div class="cardBody">
+                <div class="cardsubheader">Previous Day</div>
+                <table class="monthly-table">
+                    <tr><td class="label-cell">Mercerize :</td><td><span class="small-value-box">{{ mercerz.prev }} <span>Mtr</span></span></td></tr>
+                    <tr><td class="label-cell">Mercerize Rewash :</td><td><span class="small-value-box">{{ mercerz.rw_prev }} <span>Mtr</span></span></td></tr>
+                    <tr><td class="label-cell">Total Mercerize :</td><td><span class="small-value-box" style="background: #add8e6;">{{ mercerz.total_mercerz }} <span>Mtr</span></span></td></tr>
+                </table>
+
+                <div class="cardsubheader" style="margin-top:175px;">Current Month</div>
+                <table class="monthly-table">
+                    <tr><td class="label-cell">Mercerize :</td><td><span class="small-value-box">{{ mercerz.curr_mn }} <span>Mtr</span></span></td></tr>
+                    <tr><td class="label-cell">Mercerize Rewash :</td><td><span class="small-value-box">{{ mercerz.rw_curr_mn }} <span>Mtr</span></span></td></tr>
+                    <tr><td class="label-cell">Total Mercerize :</td><td><span class="small-value-box" style="background: #add8e6;">{{ mercerz.total_mercerz_curr_mn }} <span>Mtr</span></span></td></tr>
+                    <tr style="height: 175px;"><td class="label-cell" style="vertical-align: bottom;">Projected Month :</td><td style="vertical-align: bottom;"><span class="small-value-box">{{ mercerz.projected_mn }} <span>Mtr</span></span></td></tr>
+                </table>
+
+                <div class="progress-wrapper">
+                    <div class="progress-container"><div class="progress-bar" style="width: {{ mercerz.tot_progress }}%;"></div></div>
+                    <div class="progress-text">{{ mercerz.tot_progress }}% Completed</div>
+                    <div class="legend">
+                        <div class="legend-item"><div class="legend-box blue-box"></div> Current Month</div>
+                        <div class="legend-item"><div class="legend-box grey-box"></div> Projected Month</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% comment %} SANFORIZING and STENTER  {% endcomment %}
+
+<div class="dashboard-section" style="margin-top: 50px;">
+    <div class="cardContainer">
+        <div class="cardInv">
+            <div class="cardHeader">STENTER</div>
+            <div class="cardBody">
+                <div class="cardsubheader">Previous Day</div>
+                <table class="monthly-table">
+                    <tr><td class="label-cell">Stenter :</td><td><span class="small-value-box">{{ stent.prev }} <span>Mtr</span></span></td></tr>
+                    <tr><td class="label-cell">Stenter Rewash :</td><td><span class="small-value-box">{{ stent.rw_prev }} <span>Mtr</span></span></td></tr>
+                    <tr><td class="label-cell">Total Stenter :</td><td><span class="small-value-box" style="background: #add8e6;">{{ stent.total_stent }} <span>Mtr</span></span></td></tr>
+                </table>
+
+                <div class="cardsubheader" style="margin-top:175px;">Current Month</div>
+                <table class="monthly-table">
+                    <tr><td class="label-cell">Stenter :</td><td><span class="small-value-box">{{ stent.curr_mn }} <span>Mtr</span></span></td></tr>
+                    <tr><td class="label-cell">Stenter Rewash :</td><td><span class="small-value-box">{{ stent.rw_curr_mn }} <span>Mtr</span></span></td></tr>
+                    <tr><td class="label-cell">Total Stenter :</td><td><span class="small-value-box" style="background: #add8e6;">{{ stent.total_stent_curr_mn }} <span>Mtr</span></span></td></tr>
+                    <tr style="height: 175px;"><td class="label-cell" style="vertical-align: bottom;">Projected Month :</td><td style="vertical-align: bottom;"><span class="small-value-box">{{ stent.projected_mn }} <span>Mtr</span></span></td></tr>
+                </table>
+
+                <div class="progress-wrapper">
+                    <div class="progress-container"><div class="progress-bar" style="width: {{ stent.tot_progress }}%;"></div></div>
+                    <div class="progress-text">{{ stent.tot_progress }}% Completed</div>
+                    <div class="legend">
+                        <div class="legend-item"><div class="legend-box blue-box"></div> Current Month</div>
+                        <div class="legend-item"><div class="legend-box grey-box"></div> Projected Month</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="cardInv">
+            <div class="cardHeader">SANFORIZING</div>
+            <div class="cardBody">
+                <div class="cardsubheader">Previous Day</div>
+                <table class="monthly-table">
+                    <tr>
+                        <td class="label-cell">Old Meter :</td>
+                        <td><span class="small-value-box">{{ sanfor.old_prev_day }} <span>Mtr</span></span></td>
+                    </tr>
+                    <tr><td class="label-cell">New Meter :</td><td><span class="small-value-box">{{ sanfor.new_prev_day }} <span>Mtr</span></span></td></tr>
+                    <tr><td class="label-cell">Total Meter :</td><td><span class="small-value-box" style="background: #add8e6;">{{ sanfor.tot_prev_day }} <span>Mtr</span></span></td></tr>
+                    <tr><td class="label-cell">Old Rewash :</td><td><span class="small-value-box">{{ sanfor.old_prev_day_rw }} <span>Mtr</span></span></td></tr>
+                    <tr><td class="label-cell">New Rewash :</td><td><span class="small-value-box">{{ sanfor.new_prev_day_rw }} <span>Mtr</span></span></td></tr>
+                    <tr><td class="label-cell">Total Rewash :</td><td><span class="small-value-box" style="background: #add8e6;">{{ sanfor.tot_prev_day_rw }} <span>Mtr</span></span></td></tr>
+                </table>
+
+                <div class="cardsubheader" style="margin-top:15px;">Current Month</div>
+                <table class="monthly-table">
+                    <tr><td class="label-cell">Old Meter :</td><td><span class="small-value-box">{{ sanfor.old_current_month }} <span>Mtr</span></span></td></tr>
+                    <tr><td class="label-cell">New Meter :</td><td><span class="small-value-box">{{ sanfor.new_current_month }} <span>Mtr</span></span></td></tr>
+                    <tr><td class="label-cell">Total Meter :</td><td><span class="small-value-box" style="background: #add8e6;">{{ sanfor.tot_current_month }} <span>Mtr</span></span></td></tr>
+                    <tr><td class="label-cell">Old Rewash :</td><td><span class="small-value-box">{{ sanfor.old_curr_day_rw }} <span>Mtr</span></span></td></tr>
+                    <tr><td class="label-cell">New Rewash :</td><td><span class="small-value-box">{{ sanfor.new_curr_day_rw }} <span>Mtr</span></span></td></tr>
+                    <tr><td class="label-cell">Total Rewash :</td><td><span class="small-value-box" style="background: #add8e6;">{{ sanfor.tot_curr_day_rw }} <span>Mtr</span></span></td></tr>
+                    <tr><td class="label-cell" style="padding-top:15px;">Projected Month :</td><td style="padding-top:15px;"><span class="small-value-box">{{ sanfor.sanfor_projected_mn }} <span>Mtr</span></span></td></tr>
+                </table>
+
+                <div class="progress-wrapper">
+                    <div class="progress-container"><div class="progress-bar" style="width: {{ sanfor.tot_progress }}%;"></div></div>
+                    <div class="progress-text">{{ sanfor.tot_progress }}% Completed</div>
+                    <div class="legend">
+                        <div class="legend-item"><div class="legend-box blue-box"></div> Current Month</div>
+                        <div class="legend-item"><div class="legend-box grey-box"></div> Projected Month</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 
+{% comment %} INSPECTION {% endcomment %}
+<div class="dashboard-section"  style="margin-top: 50px;">
+    <div class="section-title">INSPECTION</div>
+    <div class="cardContainer">
+
+        <div class="cardInv">
+            <div class="cardHeader">INSPECTION</div>
+            <div class="cardBody">
+                
+                <div class="cardsubheader">Previous Day</div>
+                <table class="monthly-table">
+                    <tr><td class="label-cell">Meter :</td><td><span class="small-value-box">{{ inspec.prev_meter }} <span>Mtr</span></span></td></tr>
+                    <tr><td class="label-cell">Machine Count :</td><td><span class="small-value-box">{{ inspec.prev_machines }}</span></td></tr>
+                    <tr><td class="label-cell">Digital Meter :</td><td><span class="small-value-box">{{ inspec.prev_digi }} <span>Mtr</span></span></td></tr>
+                    <tr><td class="label-cell">Digital Meter % :</td><td><span class="small-value-box">{{ inspec.prev_digi_perc }} <span>%</span></span></td></tr>
+                    <tr><td class="label-cell">Inspection Rewash :</td><td><span class="small-value-box">{{ inspec.prev_rw }} <span>Mtr</span></span></td></tr>
+                    <tr><td class="label-cell">A Grade % :</td><td><span class="small-value-box">{{ inspec.prev_a_grade }} <span>%</span></span></td></tr>
+                    <tr><td class="label-cell">B Grade % :</td><td><span class="small-value-box">{{ inspec.prev_b_grade }} <span>%</span></span></td></tr>
+                </table>
+
+                <div class="cardsubheader" style="margin-top:20px;">Monthly</div>
+                <table class="monthly-table">
+                    <tr><td class="label-cell">Inspection Current Month :</td><td><span class="small-value-box">{{ inspec.curr_meter }} <span>Mtr</span></span></td></tr>
+                    <tr><td class="label-cell">Machine Count :</td><td><span class="small-value-box" style="color: blue;">{{ inspec.curr_machines }}</span></td></tr>
+                    <tr><td class="label-cell">Digital Meter Current Month :</td><td><span class="small-value-box">{{ inspec.curr_digi }} <span>Mtr</span></span></td></tr>
+                    <tr><td class="label-cell">Digital Meter % Current Month :</td><td><span class="small-value-box">{{ inspec.curr_digi_perc }} <span>%</span></span></td></tr>
+                    <tr><td class="label-cell">Inspection Rewash Current Month :</td><td><span class="small-value-box">{{ inspec.curr_rw }} <span>Mtr</span></span></td></tr>
+                    <tr><td class="label-cell">A Grade % Current Month :</td><td><span class="small-value-box">{{ inspec.curr_a_grade }} <span>%</span></span></td></tr>
+                    <tr><td class="label-cell">B Grade % Current Month :</td><td><span class="small-value-box">{{ inspec.curr_b_grade }} <span>%</span></span></td></tr>
+                </table>
+
+                <table class="monthly-table" style="margin-top:15px;">
+                    <tr>
+                        <td class="label-cell">Projected Month :</td>
+                        <td><span class="small-value-box">{{ inspec.inspec_projected_mn }} <span>Mtr</span></span></td>
+                    </tr>
+                </table>
+
+                <div class="progress-wrapper">
+                    <div class="progress-container"><div class="progress-bar" style="width: {{ inspec.tot_progress }}%;"></div></div>
+                    <div class="progress-text">{{ inspec.tot_progress }}% Completed</div>
+                    <div class="legend">
+                        <div class="legend-item"><div class="legend-box blue-box"></div> Current Month</div>
+                        <div class="legend-item"><div class="legend-box grey-box"></div> Projected Month</div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+
+    </div>
+</div>

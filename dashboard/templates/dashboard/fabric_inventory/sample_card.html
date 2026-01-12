@@ -1,0 +1,81 @@
+{% comment %} STOCK {% endcomment %}
+<div class="freshCard">
+<div class="freshHeader">STOCK</div>
+
+<div class="freshBody">
+
+<div class="freshChartContainer">
+    <canvas id="freshProgressChart"></canvas>
+    <div class="freshChartText">{{ fresh.overall_pct }}% of Overall Inventory</div>
+    <div class="freshChartSubText">
+        (Inventory: {{ fresh.total|intcomma }} / Meter: {{ kpi_meter|intcomma }})
+    </div>
+</div>
+
+<table width="100%">
+<tr><td class="freshLabelCell">Open :</td><td class="freshValueCell">{{ fresh.open|intcomma }}</td></tr>
+<tr><td colspan="2"><div class="bar-outer"><div class="bar-inner" style="width:{{ fresh.pct_open }}%;background:#4caf50;"></div><div class="bar-text">{{ fresh.pct_open }}%</div></div></td></tr>
+
+<tr><td class="freshLabelCell">Close :</td><td class="freshValueCell">{{ fresh.close|intcomma }}</td></tr>
+<tr><td colspan="2"><div class="bar-outer"><div class="bar-inner" style="width:{{ fresh.pct_close }}%;background:#2196f3;"></div><div class="bar-text">{{ fresh.pct_close }}%</div></div></td></tr>
+
+<tr><td class="freshLabelCell">Cancel :</td><td class="freshValueCell">{{ fresh.cancel|intcomma }}</td></tr>
+<tr><td colspan="2"><div class="bar-outer"><div class="bar-inner" style="width:{{ fresh.pct_cancel }}%;background:#ff9510;"></div><div class="bar-text">{{ fresh.pct_cancel }}%</div></div></td></tr>
+
+<tr><td class="freshLabelCell">RFAN :</td><td class="freshValueCell">{{ fresh.rfan|intcomma }}</td></tr>
+<tr><td colspan="2"><div class="bar-outer"><div class="bar-inner" style="width:{{ fresh.pct_rfan }}%;background:#e91e63;"></div><div class="bar-text">{{ fresh.pct_rfan }}%</div></div></td></tr>
+
+<tr><td class="freshLabelCell"><b>Total :</b></td><td class="freshValueCell"><b>{{ fresh.total|intcomma }}</b></td></tr>
+</table>
+
+<div class="sectionBox">
+<div class="sectionTitle grade">GRADE WISE</div>
+{% for g in fresh_grade_list %}
+<div class="rowBlock">
+<div class="rowTop"><div class="rowLabel">{{ g.grade }}</div><div class="rowValue">{{ g.value|intcomma }}</div></div>
+<div class="rowBar"><div class="bar-outer"><div class="bar-inner" style="width:{{ g.pct }}%;background:#4caf50;"></div><div class="bar-text">{{ g.pct }}%</div></div></div>
+</div>
+{% endfor %}
+</div>
+
+<div class="sectionBox">
+<div class="sectionTitle manager">MANAGER WISE</div>
+{% for m in fresh_manager_list %}
+<div class="rowBlock">
+<div class="rowTop"><div class="rowLabel">{{ m.manager }}</div><div class="rowValue">{{ m.value|intcomma }}</div></div>
+<div class="rowBar"><div class="bar-outer"><div class="bar-inner" style="width:{{ m.pct }}%;background:#2196f3;"></div><div class="bar-text">{{ m.pct }}%</div></div></div>
+</div>
+{% endfor %}
+</div>
+
+<div class="sectionBox">
+<div class="sectionTitle aging">AGING WISE</div>
+{% for a in fresh_aging_list %}
+<div class="rowBlock">
+<div class="rowTop"><div class="rowLabel">{{ a.age }}</div><div class="rowValue">{{ a.value|intcomma }}</div></div>
+<div class="rowBar"><div class="bar-outer"><div class="bar-inner" style="width:{{ a.pct }}%;background:#ff9510;"></div><div class="bar-text">{{ a.pct }}%</div></div></div>
+</div>
+{% endfor %}
+</div>
+
+</div>
+</div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    new Chart(document.getElementById("freshProgressChart"), {
+        type: "doughnut",
+        data: {
+            datasets: [{
+                data: [{{ fresh.total }}, {{ kpi_meter }} - {{ fresh.total }}],
+                backgroundColor: ["#4caf50","#e0e0e0"],
+                borderWidth:0
+            }]
+        },
+        options: { cutout:"72%", plugins:{ legend:{ display:false } } }
+    });
+});
+</script>
