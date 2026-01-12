@@ -70,3 +70,9 @@ def yarn(request):
     # Combine data from both services
 
     return render(request, "dashboard/yarn/code.html", data)
+
+def mainPage(request):
+    data = {}
+    # Combine data from both services
+
+    return render(request, "dashboard/mainpage/dashboard.html", data)
