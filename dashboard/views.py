@@ -30,7 +30,8 @@ from dashboard.services.order_in_hand.order_in_hand_exp import order_in_hand_exp
 from dashboard.services.order_in_hand.order_in_hand_loc import order_in_hand_local
 from dashboard.services.order_in_hand.order_in_hand_total import order_in_hand_total
 
-from dashboard.services.Production.production import ( warping_dashboard,
+from dashboard.services.Production.production import ( 
+    warping_dashboard,
     dyeing_dashboard, 
     weaving_dashboard, 
     finishing_dashboard,
@@ -40,10 +41,6 @@ from dashboard.services.Production.production import ( warping_dashboard,
     sanfor_dashboard,
     inspection_dashboard
 )
-
-
-
-
 
 def home(request):
     data = {}
