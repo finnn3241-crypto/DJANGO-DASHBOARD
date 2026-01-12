@@ -10,17 +10,6 @@ from dashboard.services.Fabric_Inventory.fabric_inventory_service import (
     get_fresh_manager_data,
     get_fresh_aging_data
 )
-from .services.Production.warping import (
-    get_warping_data
-)
-
-from .services.Production.dyeing import (
-    get_dyeing_data 
-)
-
-from .services.Production.weaving import (
-    get_weaving_data
-)
 
 from .services.Order_In_Hand.oih_export import (
     get_export_dispatch_kpis
@@ -73,8 +62,11 @@ def orderInHand(request):
 def production(request):
     data = {}
     # Combine data from both services
-    data.update(get_warping_data(request)) 
-    data.update(get_dyeing_data(request))
-    data.update(get_weaving_data(request))
 
     return render(request, "dashboard/production/warping.html", data)
+
+def yarn(request):
+    data = {}
+    # Combine data from both services
+
+    return render(request, "dashboard/yarn/code.html", data)
