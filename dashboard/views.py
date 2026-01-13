@@ -48,8 +48,9 @@ from dashboard.services.Yarn_Inventory.yarn_inventory import (
     get_aging_1_2_data,
     get_aging_2_data
     )
+from datetime import date
 
-
+from dashboard.services.Production.inspect_machine import machine_dashboard_data
 
 def index(request):
     data = {}
@@ -145,5 +146,8 @@ def yarn(request):
     }
     return render(request, "dashboard/yarn_inventory/yarn_kpis.html", context)
 
+def machine(request):
+    context = machine_dashboard_data(date.today())
+    return render(request, "dashboard/Production/Inspection_machines.html", context)
 
 

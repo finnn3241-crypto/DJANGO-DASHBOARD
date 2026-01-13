@@ -72,57 +72,115 @@ def unit_dashboard_data():
 
             # ---------- PREVIOUS DAY : REASON ----------
             cur.execute(f"""
-                SELECT reason, SUM(qty) qty FROM (
+                SELECT
+                    reason,
+                    SUM(qty) AS qty
+                FROM
+                (
+                    -- Actual data
                     SELECT
                         CASE
-                            WHEN reason IN ('F.O.C.','ADJUST IN DISPATCH') THEN 'A.I.D/F.O.C'
+                            WHEN reason IN ('F.O.C.', 'ADJUST IN DISPATCH') THEN 'A.I.D/F.O.C'
                             WHEN reason = 'INVOICE ON DELIVERY' THEN 'I.O.D'
-                        END reason,
-                        gmsm_qnty qty
+                        END AS reason,
+                        gmsm_qnty AS qty
                     FROM db_sample_data
                     WHERE gmsm_date = (SELECT MAX(gmsm_date) FROM db_sample_data)
-                    AND reason IN ('F.O.C.','ADJUST IN DISPATCH','INVOICE ON DELIVERY')
+                    AND reason IN ('F.O.C.', 'ADJUST IN DISPATCH', 'INVOICE ON DELIVERY')
                     AND {unit_where}
-                ) x GROUP BY reason
+
+                    UNION ALL
+
+                    -- Zero rows to force all categories to appear
+                    SELECT 'A.I.D/F.O.C' AS reason, 0::NUMERIC AS qty
+                    UNION ALL
+                    SELECT 'I.O.D'      AS reason, 0::NUMERIC AS qty
+                ) t
+                GROUP BY reason
+                ORDER BY reason;
             """, params)
             prev_reason = fetchall(cur)
 
             # ---------- PREVIOUS DAY : MANAGER ----------
             cur.execute(f"""
+                SELECT
+                    manager_name,
+                    SUM(qty) AS qty
+                FROM
+                (
                 SELECT manager_name, SUM(gmsm_qnty) qty
                 FROM db_sample_data
                 WHERE gmsm_date = (SELECT MAX(gmsm_date) FROM db_sample_data)
                 AND {unit_where}
                 GROUP BY manager_name
-                ORDER BY manager_name
+                 UNION ALL
+
+                    SELECT DISTINCT
+                        manager_name,
+                        0::NUMERIC AS qty
+                    FROM db_sample_data
+                ) t
+                GROUP BY manager_name
+                ORDER BY manager_name;
             """, params)
             prev_manager = fetchall(cur)
 
             # ---------- CURRENT MONTH : REASON ----------
             cur.execute(f"""
-                SELECT reason, SUM(qty) qty FROM (
-                    SELECT
-                        CASE
-                            WHEN reason IN ('F.O.C.','ADJUST IN DISPATCH') THEN 'A.I.D/F.O.C'
-                            WHEN reason = 'INVOICE ON DELIVERY' THEN 'I.O.D'
-                        END reason,
-                        gmsm_qnty qty
-                    FROM db_sample_data
-                    WHERE gmsm_date BETWEEN date_trunc('month', CURRENT_DATE) AND CURRENT_DATE
-                    AND reason IN ('F.O.C.','ADJUST IN DISPATCH','INVOICE ON DELIVERY')
-                    AND {unit_where}
-                ) x GROUP BY reason
+                        SELECT
+                        reason,
+                        SUM(qty) AS qty
+                    FROM
+                    (
+                        -- Actual data
+                        SELECT
+                            CASE
+                                WHEN reason IN ('F.O.C.', 'ADJUST IN DISPATCH') THEN 'A.I.D/F.O.C'
+                                WHEN reason = 'INVOICE ON DELIVERY' THEN 'I.O.D'
+                            END AS reason,
+                            gmsm_qnty AS qty
+                        FROM db_sample_data
+                        WHERE gmsm_date BETWEEN date_trunc('month', CURRENT_DATE) AND CURRENT_DATE
+                        AND reason IN ('F.O.C.', 'ADJUST IN DISPATCH', 'INVOICE ON DELIVERY')
+                        AND {unit_where}
+
+                        UNION ALL
+
+                        -- Zero rows to force all categories to appear
+                        SELECT 'A.I.D/F.O.C' AS reason, 0::NUMERIC AS qty
+                        UNION ALL
+                        SELECT 'I.O.D'      AS reason, 0::NUMERIC AS qty
+                    ) t
+                    GROUP BY reason
+                    ORDER BY reason;
             """, params)
             curr_reason = fetchall(cur)
 
             # ---------- CURRENT MONTH : MANAGER ----------
             cur.execute(f"""
-                SELECT manager_name, SUM(gmsm_qnty) qty
-                FROM db_sample_data
-                WHERE gmsm_date BETWEEN date_trunc('month', CURRENT_DATE) AND CURRENT_DATE
-                AND {unit_where}
+                SELECT
+                    manager_name,
+                    SUM(qty) AS qty
+                FROM
+                (
+                    SELECT
+                        manager_name,
+                        SUM(gmsm_qnty) AS qty
+                    FROM db_sample_data
+                    WHERE gmsm_date BETWEEN date_trunc('month', CURRENT_DATE) AND CURRENT_DATE
+                    AND {unit_where}
+                    GROUP BY manager_name
+
+                    UNION ALL
+
+                    SELECT DISTINCT
+                        manager_name,
+                        0::NUMERIC AS qty
+                    FROM db_sample_data
+                ) t
                 GROUP BY manager_name
-                ORDER BY manager_name
+                ORDER BY manager_name;
+
             """, params)
             curr_manager = fetchall(cur)
 

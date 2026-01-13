@@ -103,12 +103,30 @@ def order_in_hand_exp():
     # ---------- MANAGER WISE ----------
     with connection.cursor() as cur:
         cur.execute("""
-            SELECT manager_name,
-                   COALESCE(SUM(ord_meter_mtr),0)-COALESCE(SUM(ship_qty_mtr),0) dispatch_exp
-            FROM rpt_fabord_status_el
-            WHERE exp_loc='EXPORT'
+            SELECT
+                manager_name,
+                SUM(dispatch_exp) AS dispatch_exp
+            FROM
+            (
+                -- Actual data
+                SELECT
+                    manager_name,
+                    COALESCE(SUM(ord_meter_mtr), 0) - COALESCE(SUM(ship_qty_mtr), 0) AS dispatch_exp
+                FROM rpt_fabord_status_el
+                WHERE exp_loc = 'EXPORT'
+                GROUP BY manager_name
+
+                UNION ALL
+
+                -- Zero rows to force all managers to appear
+                SELECT DISTINCT
+                    manager_name,
+                    0::NUMERIC AS dispatch_exp
+                FROM rpt_fabord_status_el
+            ) t
             GROUP BY manager_name
-            ORDER BY manager_name
+            ORDER BY manager_name;
+
         """)
         managers = []
         for name, val in cur.fetchall():

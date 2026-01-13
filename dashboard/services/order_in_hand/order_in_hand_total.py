@@ -113,11 +113,27 @@ def order_in_hand_total():
     with connection.cursor() as cur:
         cur.execute("""
             SELECT
-                COALESCE(manager_name, 'BLANK') AS manager_name,
-                COALESCE(SUM(ord_meter_mtr), 0) - COALESCE(SUM(ship_qty_mtr), 0) AS dispatch_exp
-            FROM rpt_fabord_status_el
-            GROUP BY COALESCE(manager_name, 'BLANK')
-            ORDER BY COALESCE(manager_name, 'BLANK')
+                manager_name,
+                SUM(dispatch_exp) AS dispatch_exp
+            FROM
+            (
+                -- Actual data
+                SELECT
+                    COALESCE(manager_name, 'BLANK') AS manager_name,
+                    COALESCE(SUM(ord_meter_mtr), 0) - COALESCE(SUM(ship_qty_mtr), 0) AS dispatch_exp
+                FROM rpt_fabord_status_el
+                GROUP BY COALESCE(manager_name, 'BLANK')
+
+                UNION ALL
+
+                -- Zero rows to force all managers to appear
+                SELECT DISTINCT
+                    COALESCE(manager_name, 'BLANK') AS manager_name,
+                    0::NUMERIC AS dispatch_exp
+                FROM rpt_fabord_status_el
+            ) t
+            GROUP BY manager_name
+            ORDER BY manager_name;
         """)
 
         rows = cur.fetchall()
