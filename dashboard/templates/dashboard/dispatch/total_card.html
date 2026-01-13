@@ -1,33 +1,61 @@
 {% load humanize %}
 
-<div style="padding:0 20px">
-
-<div class="mgr-row">
-<div style="font-weight:600;">Behind Target In %</div>
-<div class="bar-outer"><div class="bar-inner" style="width:{{ behind_percent_tot }}%;background:#ddd60a;">{{ behind_percent_tot }}%</div></div>
-<div style="font-size:13px;font-weight:600;text-align:right;color:#555">Target To Be Achieved Till Date: {{ target_till_date_tot|intcomma }}</div>
+<!-- Behind Target Section -->
+<div class="rowBlock">
+    <div class="rowTop">
+        <div class="rowLabel-bti">Behind Target In %</div>
+    </div>
+    <div class="bar-outer">
+        <div class="bar-inner" style="width:{{ behind_percent_tot }}%;background:#ddd60a;"></div>
+        <div class="bar-text">{{ behind_percent_tot }}%</div>
+    </div>
+    <div class="infoText">Target To Be Achieved Till Date: {{ target_till_date_tot|intcomma }}</div>
 </div>
 
-<div style="text-align:center;font-size:21px;font-weight:600;color:mediumvioletred;margin:15px 0">Expected Dispatch Target {{ expected_dispatch_tot|intcomma }}</div>
+<!-- Expected Dispatch Highlight -->
+<div class="highlightBox">
+    Expected Dispatch Target: {{ expected_dispatch_tot|intcomma }}
+</div>
 
-<table style="width:100%;font-size:15px">
-<tr><td>Previous Day Dispatch :</td><td style="text-align:right;font-weight:600">{{ prev_day_dispatch_tot|intcomma }}</td></tr>
-<tr><td>Current Day Planned :</td><td style="text-align:right;font-weight:600">{{ curr_day_plan_tot|intcomma }}</td></tr>
-<tr><td>Current Month Planned :</td><td style="text-align:right;font-weight:600">{{ total_plan_tot|intcomma }}</td></tr>
-<tr><td>Current Month Dispatch :</td><td style="text-align:right;font-weight:600">{{ curr_dispatch_tot|intcomma }}</td></tr>
-<tr><td>Balance Current Month Dispatch :</td><td style="text-align:right;font-weight:600">{{ balance_plan_tot|intcomma }}</td></tr>
+<!-- Dispatch Summary Table -->
+<table style="margin:15px 0;">
+    <tr>
+        <td style="padding:4px 0; padding-right: 120px;">Previous Day Dispatch:</td>
+        <td style="text-align:right;font-weight:600;padding:4px 0;">{{ prev_day_dispatch_tot|intcomma }}</td>
+    </tr>
+    <tr>
+        <td style="padding:4px 0; padding-right: 120px;">Current Day Planned:</td>
+        <td style="text-align:right;font-weight:600;padding:4px 0;">{{ curr_day_plan_tot|intcomma }}</td>
+    </tr>
+    <tr>
+        <td style="padding:4px 0; padding-right: 120px;">Current Month Planned:</td>
+        <td style="text-align:right;font-weight:600;padding:4px 0;">{{ total_plan_tot|intcomma }}</td>
+    </tr>
+    <tr>
+        <td style="padding:4px 0; padding-right: 120px;">Current Month Dispatch:</td>
+        <td style="text-align:right;font-weight:600;padding:4px 0;">{{ curr_dispatch_tot|intcomma }}</td>
+    </tr>
+    <tr>
+        <td style="padding:4px 0; padding-right: 120px;">Balance Current Month:</td>
+        <td style="text-align:right;font-weight:600;padding:4px 0;">{{ balance_plan_tot|intcomma }}</td>
+    </tr>
 </table>
 
-</div>
-
-<div class="cardHeader">MANAGER WISE</div>
-
-<div class="cardBody">
-{% for m in managers_tot %}
-<div class="mgr-row">
-<div class="mgr-name">{{ m.name }} <span>{{ m.dispatch|intcomma }}</span></div>
-<div class="bar-outer"><div class="bar-inner" style="width:{{ m.percent }}%;background:{{ m.color }};">{{ m.percent }}%</div></div>
-<div style="font-size:13px;font-weight:600;text-align:right;color:#555">Plan: {{ m.total|intcomma }}</div>
-</div>
-{% endfor %}
+<!-- Manager Wise Section -->
+<div class="sectionBox" style="margin-top:20px;">
+    <div class="sectionTitle">MANAGER WISE</div>
+    
+    {% for m in managers_tot %}
+    <div class="rowBlock">
+        <div class="rowTop">
+            <div class="rowLabel">{{ m.name }}</div>
+            <div class="rowValue">{{ m.dispatch|intcomma }}</div>
+        </div>
+        <div class="bar-outer">
+            <div class="bar-inner" style="width:{{ m.percent }}%;background:{{ m.color }};"></div>
+            <div class="bar-text">{{ m.percent }}%</div>
+        </div>
+        <div class="infoText">Plan: {{ m.total|intcomma }}</div>
+    </div>
+    {% endfor %}
 </div>

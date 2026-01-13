@@ -1,0 +1,421 @@
+{% load humanize %}
+
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+body { margin:0; padding:0; background:#f5f6f8; font-family: 'IBM Plex Sans', system-ui, sans-serif; }
+
+.fabric-row{
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px,1fr));
+    gap:24px;
+    padding:20px;
+}
+
+.freshCard{
+    background:#eceef1;
+    border-radius:16px;
+    box-shadow:0 6px 14px rgba(0,0,0,.12);
+    overflow:hidden;
+    border:1px solid #d8dbe0;
+    display:flex;
+    flex-direction:column;
+}
+
+.freshHeader{
+    background:#8fbc8f;
+    color:#000;
+    text-align:center;
+    padding:12px;
+    font-weight:700;
+    font-size:18px;
+    letter-spacing:.8px;
+    text-transform:uppercase;
+}
+
+.freshBody{ padding:16px; }
+
+.freshChartContainer{ text-align:center; margin-bottom:12px; }
+.freshChartText{ font-weight:700; font-size:14px; margin-top:8px; }
+.freshChartSubText{ font-size:13px; color:#2d2d2d; }
+
+.sectionBox{
+    background:#fff;
+    border-radius:16px;
+    padding:12px;
+    margin-top:14px;
+    box-shadow:0 2px 6px rgba(0,0,0,.08);
+    border:1px solid #eee;
+}
+
+.sectionTitle{
+    text-align:center;
+    font-weight:800;
+    font-size:14px;
+    padding:6px 10px;
+    border-radius:12px;
+    margin:0 auto 10px;
+    width:max-content;
+    letter-spacing:.6px;
+}
+
+.grade{ background:#82d9f3; }
+
+.rowBlock{ margin-bottom:10px; }
+
+.rowTop{
+    display:flex;
+    justify-content:space-between;
+    font-size:15px;
+    text-transform:uppercase;
+}
+
+.bar-outer{
+    width:100%;
+    height:14px;
+    background:#e5e7eb;
+    border-radius:999px;
+    overflow:hidden;
+    position:relative;
+    margin-top:4px;
+}
+
+.bar-inner{
+    height:100%;
+    border-radius:999px;
+    transition:width .7s ease;
+}
+
+.bar-text{
+    position:absolute;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:11px;
+    font-weight:700;
+}
+
+canvas{ width:96px !important; height:96px !important; margin:auto; }
+</style>
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<div class="max-w-full mx-auto p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+
+<div class="bg-[#eceef1] rounded-xl shadow-md overflow-hidden flex flex-col border border-gray-200">
+
+<div class="bg-[#8fbc8f] text-black text-center py-3 font-bold text-lg uppercase tracking-wider">
+0–6 Months
+</div>
+
+<div class="p-4 flex flex-col items-center">
+    <div class="relative w-24 h-24">
+        <canvas id="ProgressChart1"></canvas>
+    </div>
+    <div class="text-center mt-3">
+        <p class="text-sm font-bold text-gray-800">
+            {{ aging.overall_pct }}% of Overall Inventory
+        </p>
+        <p class="text-xs text-gray-500 font-semibold">
+            (Inv: {{ aging.age_lbs|intcomma }} / LBS: {{ aging.total_lbs|intcomma }})
+        </p>
+    </div>
+</div>
+
+<div class="px-4 pb-6 space-y-4">
+
+{% for key, store in aging.stores.items %}
+
+<div class="bg-white rounded-2xl p-3 shadow-sm border border-gray-100">
+
+<div class="bg-[#82d9f3] text-center text-[15px] font-bold rounded-[12px] uppercase mx-[45px] text-black">
+{{ key|upper }} STORE
+</div>
+
+<!-- FRESH -->
+<div class="flex justify-between text-base uppercase mb-1">
+<span>Fresh:</span>
+<span>{{ store.fresh|intcomma }}</span>
+</div>
+
+<div class="w-full bg-gray-200 rounded-full h-4 relative mb-3">
+<div class="h-4 rounded-full transition-all duration-700"
+     style="width: {{ store.pct_fresh }}%; background-color: {{ store.color_fresh }};">
+</div>
+<span class="absolute inset-0 flex justify-center items-center text-[10px] font-black">
+{{ store.pct_fresh }}%
+</span>
+</div>
+
+<!-- SALEABLE -->
+<div class="flex justify-between text-base uppercase mb-1">
+<span>Saleable:</span>
+<span>{{ store.sale|intcomma }}</span>
+</div>
+
+<div class="w-full bg-gray-200 rounded-full h-4 relative">
+<div class="h-4 rounded-full transition-all duration-700"
+     style="width: {{ store.pct_sale }}%; background-color: {{ store.color_sale }};">
+</div>
+<span class="absolute inset-0 flex justify-center items-center text-[10px] font-black">
+{{ store.pct_sale }}%
+</span>
+</div>
+
+</div>
+
+{% endfor %}
+
+</div>
+</div>
+{% comment %} new card {% endcomment %}
+<div class="bg-[#eceef1] rounded-xl shadow-md overflow-hidden flex flex-col border border-gray-200">
+
+<div class="bg-[#8fbc8f] text-black text-center py-3 font-bold text-lg uppercase tracking-wider">
+6 MONTHS - 1 YEAR
+</div>
+
+<div class="p-4 flex flex-col items-center">
+    <div class="relative w-24 h-24">
+        <canvas id="ProgressChart2"></canvas>
+    </div>
+    <div class="text-center mt-3">
+        <p class="text-sm font-bold text-gray-800">
+            {{ aging_6_12.overall_pct }}% of Overall Inventory
+        </p>
+        <p class="text-xs text-gray-500 font-semibold">
+            (Inv: {{ aging_6_12.age_lbs|intcomma }} / LBS: {{ aging_6_12.total_lbs|intcomma }})
+        </p>
+    </div>
+</div>
+
+<div class="px-4 pb-6 space-y-4">
+
+{% for key, store in aging_6_12.stores.items %}
+
+<div class="bg-white rounded-2xl p-3 shadow-sm border border-gray-100">
+
+<div class="bg-[#82d9f3] text-center text-[15px] font-bold rounded-[12px] uppercase mx-[45px] text-black">
+{{ key|upper }} STORE
+</div>
+
+<!-- FRESH -->
+<div class="flex justify-between text-base uppercase mb-1">
+<span>Fresh:</span>
+<span>{{ store.fresh|intcomma }}</span>
+</div>
+
+<div class="w-full bg-gray-200 rounded-full h-4 relative mb-3">
+<div class="h-4 rounded-full transition-all duration-700"
+     style="width: {{ store.pct_fresh }}%; background-color: {{ store.color_fresh }};">
+</div>
+<span class="absolute inset-0 flex justify-center items-center text-[10px] font-black">
+{{ store.pct_fresh }}%
+</span>
+</div>
+
+<!-- SALEABLE -->
+<div class="flex justify-between text-base uppercase mb-1">
+<span>Saleable:</span>
+<span>{{ store.sale|intcomma }}</span>
+</div>
+
+<div class="w-full bg-gray-200 rounded-full h-4 relative">
+<div class="h-4 rounded-full transition-all duration-700"
+     style="width: {{ store.pct_sale }}%; background-color: {{ store.color_sale }};">
+</div>
+<span class="absolute inset-0 flex justify-center items-center text-[10px] font-black">
+{{ store.pct_sale }}%
+</span>
+</div>
+
+
+</div>
+
+{% endfor %}
+
+</div>
+</div>
+
+{% comment %} new card {% endcomment %}
+<div class="bg-[#eceef1] rounded-xl shadow-md overflow-hidden flex flex-col border border-gray-200">
+
+<div class="bg-[#8fbc8f] text-black text-center py-3 font-bold text-lg uppercase tracking-wider">
+1-2 YEARS
+</div>
+
+<div class="p-4 flex flex-col items-center">
+    <div class="relative w-24 h-24">
+        <canvas id="ProgressChart3"></canvas>
+    </div>
+    <div class="text-center mt-3">
+        <p class="text-sm font-bold text-gray-800">
+            {{ aging_1_2.overall_pct }}% of Overall Inventory
+        </p>
+        <p class="text-xs text-gray-500 font-semibold">
+            (Inv: {{ aging_1_2.age_lbs|intcomma }} / LBS: {{ aging_1_2.total_lbs|intcomma }})
+        </p>
+    </div>
+</div>
+
+<div class="px-4 pb-6 space-y-4">
+
+{% for key, store in aging_1_2.stores.items %}
+
+<div class="bg-white rounded-2xl p-3 shadow-sm border border-gray-100">
+
+<div class="bg-[#82d9f3] text-center text-[15px] font-bold rounded-[12px] uppercase mx-[45px] text-black">
+{{ key|upper }} STORE
+</div>
+
+<!-- FRESH -->
+<div class="flex justify-between text-base uppercase mb-1">
+<span>Fresh:</span>
+<span>{{ store.fresh|intcomma }}</span>
+</div>
+
+<div class="w-full bg-gray-200 rounded-full h-4 relative mb-3">
+<div class="h-4 rounded-full transition-all duration-700"
+     style="width: {{ store.pct_fresh }}%; background-color: {{ store.color_fresh }};">
+</div>
+<span class="absolute inset-0 flex justify-center items-center text-[10px] font-black">
+{{ store.pct_fresh }}%
+</span>
+</div>
+
+<!-- SALEABLE -->
+<div class="flex justify-between text-base uppercase mb-1">
+<span>Saleable:</span>
+<span>{{ store.sale|intcomma }}</span>
+</div>
+
+<div class="w-full bg-gray-200 rounded-full h-4 relative">
+<div class="h-4 rounded-full transition-all duration-700"
+     style="width: {{ store.pct_sale }}%; background-color: {{ store.color_sale }};">
+</div>
+<span class="absolute inset-0 flex justify-center items-center text-[10px] font-black">
+{{ store.pct_sale }}%
+</span>
+</div>
+
+
+</div>
+
+{% endfor %}
+
+</div>
+</div>
+
+{% comment %} new card {% endcomment %}
+<div class="bg-[#eceef1] rounded-xl shadow-md overflow-hidden flex flex-col border border-gray-200">
+
+<div class="bg-[#8fbc8f] text-black text-center py-3 font-bold text-lg uppercase tracking-wider">
+2+ YEARS
+</div>
+
+<div class="p-4 flex flex-col items-center">
+    <div class="relative w-24 h-24">
+        <canvas id="ProgressChart4"></canvas>
+    </div>
+    <div class="text-center mt-3">
+        <p class="text-sm font-bold text-gray-800">
+            {{ aging_2.overall_pct }}% of Overall Inventory
+        </p>
+        <p class="text-xs text-gray-500 font-semibold">
+            (Inv: {{ aging_2.age_lbs|intcomma }} / LBS: {{ aging_2.total_lbs|intcomma }})
+        </p>
+    </div>
+</div>
+
+<div class="px-4 pb-6 space-y-4">
+
+{% for key, store in aging_2.stores.items %}
+
+<div class="bg-white rounded-2xl p-3 shadow-sm border border-gray-100">
+
+<div class="bg-[#82d9f3] text-center text-[15px] font-bold rounded-[12px] uppercase mx-[45px] text-black">
+{{ key|upper }} STORE
+</div>
+
+<!-- FRESH -->
+<div class="flex justify-between text-base uppercase mb-1">
+<span>Fresh:</span>
+<span>{{ store.fresh|intcomma }}</span>
+</div>
+
+<div class="w-full bg-gray-200 rounded-full h-4 relative mb-3">
+<div class="h-4 rounded-full transition-all duration-700"
+     style="width: {{ store.pct_fresh }}%; background-color: {{ store.color_fresh }};">
+</div>
+<span class="absolute inset-0 flex justify-center items-center text-[10px] font-black">
+{{ store.pct_fresh }}%
+</span>
+</div>
+
+<!-- SALEABLE -->
+<div class="flex justify-between text-base uppercase mb-1">
+<span>Saleable:</span>
+<span>{{ store.sale|intcomma }}</span>
+</div>
+
+<div class="w-full bg-gray-200 rounded-full h-4 relative">
+<div class="h-4 rounded-full transition-all duration-700"
+     style="width: {{ store.pct_sale }}%; background-color: {{ store.color_sale }};">
+</div>
+<span class="absolute inset-0 flex justify-center items-center text-[10px] font-black">
+{{ store.pct_sale }}%
+</span>
+</div>
+
+
+</div>
+
+{% endfor %}
+
+</div>
+</div>
+
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    function buildChart(canvasId, age, total) {
+        const canvas = document.getElementById(canvasId);
+        if (!canvas) return;
+
+        const ctx = canvas.getContext("2d");
+
+        age = Number(age) || 0;
+        total = Number(total) || 0;
+
+        const remaining = Math.max(total - age, 0);
+
+        new Chart(ctx, {
+            type: "doughnut",
+            data: {
+                datasets: [{
+                    data: [age, remaining],
+                    backgroundColor: ["#28a745", "#e0e0e0"],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                cutout: "75%",
+                responsive: true,
+                plugins: { legend: { display: false } }
+            }
+        });
+    }
+
+    buildChart("ProgressChart1", {{ aging.age_lbs }}, {{ aging.total_lbs }});
+    buildChart("ProgressChart2", {{ aging_6_12.age_lbs }}, {{ aging_6_12.total_lbs }});
+    buildChart("ProgressChart3", {{ aging_1_2.age_lbs }}, {{ aging_1_2.total_lbs }});
+    buildChart("ProgressChart4", {{ aging_2.age_lbs }}, {{ aging_2.total_lbs }});
+});
+</script>
+
+
+

@@ -1,8 +1,8 @@
 from django.shortcuts import render
 
-from dashboard.services.dispatch.dispatch_service import get_dispatch_data
-from dashboard.services.dispatch.Local_dispatch import get_dispatch_data_L
-from dashboard.services.dispatch.total_dispatch import get_dispatch_data_tot
+from .services.dispatch.dispatch_service import get_dispatch_data
+from .services.dispatch.Local_dispatch import get_dispatch_data_L
+from .services.dispatch.total_dispatch import get_dispatch_data_tot
 from dashboard.services.Fabric_Inventory.fabric_inventory_service import (
     get_fabric_inventory_kpis,
     get_fresh_data,
@@ -41,6 +41,20 @@ from dashboard.services.Production.production import (
     sanfor_dashboard,
     inspection_dashboard
 )
+
+from dashboard.services.Yarn_Inventory.yarn_inventory import ( 
+    get_yarn_inventory_kpis,
+    get_fresh_inventory_data,
+    get_aging_6_12_data,
+    get_aging_1_2_data,
+    get_aging_2_data
+    )
+
+
+
+def index(request):
+    data = {}
+    return render(request, "dashboard/mainPage/index.html", data)
 
 def home(request):
     data = {}
@@ -128,14 +142,16 @@ def prod(request):
     }
     return render(request, "dashboard/Production/Production.html", context)
 
+
 def yarn(request):
-    data = {}
-    # Combine data from both services
+    context = {
+        "kpis": get_yarn_inventory_kpis(),
+        "aging": get_fresh_inventory_data(),   
+        "aging_6_12": get_aging_6_12_data(),
+        "aging_1_2": get_aging_1_2_data(),
+        "aging_2": get_aging_2_data(),
+    }
+    return render(request, "dashboard/yarn_inventory/yarn_kpis.html", context)
 
-    return render(request, "dashboard/yarn/code.html", data)
 
-def mainPage(request):
-    data = {}
-    # Combine data from both services
 
-    return render(request, "dashboard/mainpage/dashboard.html", data)

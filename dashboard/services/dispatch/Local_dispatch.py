@@ -132,18 +132,18 @@ def get_dispatch_data_L():
 
         managers_L.append({
             "name": name,
-            "total": float(total),
-            "dispatch": float(dispatch),
+            "total": total,
+            "dispatch": dispatch,
             "percent": percent,
             "color": color,
         })
 
     return {
-        "curr_dispatch_L": float(curr_dispatch_L),
-        "balance_plan_L": float(balance_plan_L),
-        "total_plan_L": float(total_plan_L),
+        "curr_dispatch_L": curr_dispatch_L,
+        "balance_plan_L": balance_plan_L,
+        "total_plan_L": total_plan_L,
         "percentage_L": percentage_L,
-        "prev_day_dispatch_L": float(prev_day_dispatch_L),
+        "prev_day_dispatch_L": prev_day_dispatch_L,
         "curr_day_plan_L": curr_day_plan_L,
         "target_till_date_L": target_till_date_L,
         "behind_percent_L": behind_percent_L,

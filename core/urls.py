@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from dashboard.views import home , fabric , sample, oih, prod, mainPage, yarn
+from dashboard.views import home , fabric , sample, oih, prod, yarn, index
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("dispatch/", home, name="dispatch"), 
@@ -25,6 +25,6 @@ urlpatterns = [
     path("oih/", oih, name="oih"), 
     path("prod/", prod, name="prod") , 
     path("yarn/", yarn, name="yarn"),
-    path("", mainPage, name="mainPage"),               
+    path("", index, name="index"),               
 ]
 
