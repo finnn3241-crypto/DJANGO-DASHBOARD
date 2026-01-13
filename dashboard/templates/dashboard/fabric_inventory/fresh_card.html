@@ -1,90 +1,132 @@
 {% load humanize %}
 
 <style>
-body { margin:0; padding:0; }
+body { margin:0; padding:0; background:#f5f6f8; font-family: 'IBM Plex Sans', system-ui, sans-serif;  }
 
-.fabric-row {
-    display:flex;
-    gap:16px;
-    width:100%;
-    padding:12px 16px;
-    box-sizing:border-box;
+.fabric-row{
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px,1fr));
+    gap:24px;
+    padding:20px;
 }
 
-.freshCard {
-    flex:1;
-    min-width:260px;
+/* MAIN CARD */
+.freshCard{
     background:#eceef1;
-    border-radius:8px;
-    box-shadow:0 2px 5px rgba(0,0,0,.2);
-    padding-bottom:20px;
-}
-
-.freshHeader {
-    background:#714b67;
-    color:white;
-    font-weight:700;
-    font-size:18px;
-    padding:10px;
-    text-align:center;
-    border-radius:4px;
-}
-
-.freshBody { padding:12px; }
-
-.freshLabelCell { text-align:left; }
-.freshValueCell { text-align:right; font-weight:600; }
-
-.bar-outer {
-    width:100%;
-    height:13px;
-    background:#e0e0e0;
-    border-radius:10px;
+    border-radius:16px;
+    box-shadow:0 6px 14px rgba(0,0,0,.12);
     overflow:hidden;
-    margin-top:4px;
-    position:relative;
-}
-.bar-inner { height:100%; border-radius:10px; }
-.bar-text {
-    position:absolute;
-    width:100%;
-    text-align:center;
-    line-height:13px;
-    font-size:11px;
-    font-weight:bold;
+    border:1px solid #d8dbe0;
+    display:flex;
+    flex-direction:column;
 }
 
-.sectionBox {
-    background:lightgoldenrodyellow;
-    border-radius:14px;
-    margin:10px;
-    padding:10px;
-}
-
-.sectionTitle {
+/* CARD HEADER */
+.freshHeader{
+    background:#8fbc8f;
+    color:#000;
     text-align:center;
+    padding:12px;
     font-weight:700;
-    font-size:15px;
-    padding:5px;
-    border-radius:10px;
-    margin-bottom:6px;
+    font-size:25px;
+    letter-spacing:.8px;
+    text-transform:uppercase;
 }
 
-.grade{background:#82d9f3;}
-.manager{background:#ff9065;}
-.aging{background:#86ef8e;}
+/* BODY */
+.freshBody{ padding:16px; }
 
-.rowBlock { margin-bottom:8px; }
-.rowTop { display:flex; justify-content:space-between; }
-.rowLabel { font-weight:500; }
-.rowValue { font-weight:600; }
-.rowBar { margin-top:3px; }
+/* CHART */
+.freshChartContainer{ text-align:center; margin-bottom:12px; }
+.freshChartText{ font-weight:700; font-size:16px; margin-top:8px; }
+.freshChartSubText{ font-size:14px; color:#2d2d2d; }
 
-.freshChartContainer { text-align:center; margin:10px 0 15px; }
-#freshProgressChart { width:85px!important; height:85px!important; margin:auto; }
-.freshChartText { font-weight:600; margin-top:6px; }
-.freshChartSubText { font-size:12px; color:#555; }
+/* STORE / SECTION BOX */
+.sectionBox{
+    background:#fff;
+    border-radius:16px;
+    padding:12px;
+    margin-top:14px;
+    box-shadow:0 2px 6px rgba(0,0,0,.08);
+    border:1px solid #eee;
+}
+
+/* SECTION HEADER */
+.sectionTitle{
+    text-align:center;
+    font-weight:800;
+    font-size:14px;
+    padding:6px 10px;
+    border-radius:12px;
+    margin:0 auto 10px;
+    width:max-content;
+    letter-spacing:.6px;
+}
+
+.grade{ background:#82d9f3; }
+.manager{ background:#ff9065; }
+.aging{ background:#86ef8e; }
+
+/* ROWS */
+.rowBlock{ margin-bottom:10px; }
+.rowTop{
+    display:flex;
+    justify-content:space-between;
+    font-size:16px;
+    text-transform:uppercase;
+}
+.rowLabel{ font-weight:500; }
+.rowValue{ font-weight:500; }
+
+/* PROGRESS BARS */
+.bar-outer{
+    width:100%;
+    height:14px;
+    background:#e5e7eb;
+    border-radius:999px;
+    overflow:hidden;
+    position:relative;
+    margin-top:4px;
+}
+.bar-inner{
+    height:100%;
+    border-radius:999px;
+    transition:width .7s ease;
+}
+.bar-text{
+    position:absolute;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:11px;
+    font-weight:600;
+}
+.empty-bar-inner {
+        height: 100%;
+        background: none;
+        border-radius: 10px;
+}
+
+.empty-bar-outer {
+        width: 100%;
+        height: 13px;
+        background: none;
+        border-radius: 10px;
+        overflow: hidden;
+        position: relative;
+        margin-top: 3px;
+}
+/* TABLE */
+table{ font-size:16px; margin-bottom:6px; }
+.freshLabelCell{ text-transform:uppercase; }
+.freshValueCell{ text-align:right; }
+
+/* CANVAS SIZE */
+canvas{ width:96px !important; height:96px !important; margin:auto; }
 </style>
+
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <div class="fabric-row">
 <div class="freshCard">
@@ -156,7 +198,7 @@ body { margin:0; padding:0; }
 <div class="freshBody">
 
 <div class="freshChartContainer">
-    <canvas id="freshProgressChart"></canvas>
+    <canvas id="stockProgressChart"></canvas>
     <div class="freshChartText">{{ stock.overall_pct }}% of Overall Inventory</div>
     <div class="freshChartSubText">
         (Inventory: {{ stock.total|intcomma }} / Meter: {{ kpi_meter|intcomma }})
@@ -246,27 +288,27 @@ body { margin:0; padding:0; }
 <div class="freshBody">
 
 <div class="freshChartContainer">
-    <canvas id="freshProgressChart"></canvas>
+    <canvas id="sampleProgressChart"></canvas>
     <div class="freshChartText">{{ sample.overall_pct }}% of Overall Inventory</div>
     <div class="freshChartSubText">
-        (Inventory: {{ sample.total|intcomma }} / Meter: {{ kpi_meter|intcomma }})
+        (Inventory: {{ sample.sample|intcomma }} / Meter: {{ kpi_meter|intcomma }})
     </div>
 </div>
 
 <table width="100%">
 <tr><td class="freshLabelCell">Sample :</td><td class="freshValueCell">{{ sample.sample|intcomma }}</td></tr>
-<tr><td colspan="2"><div class="bar-outer"><div class="bar-inner" style="width:{{ sample.pct_open }}"></div><div class="bar-text">{{ sample.pct_open }}%</div></div></td></tr>
+<tr><td colspan="2"><div class="bar-outer"><div class="bar-inner" style="width:100%; background:#4caf50;"></div><div class="bar-text">100%</div></div></td></tr>
 
-<tr><td class="freshLabelCell"></td><td class="freshValueCell">&nbsp;</td></tr>
-<tr><td colspan="2"><div class="bar-outer"><div class="bar-inner" style="width:{{ sample.pct_close }}"></div><div class="bar-text">{{ sample.pct_close }}%</div></div></td></tr>
+<tr><td class="freshLabelCell">&nbsp;</td><td class="freshValueCell">&nbsp;</td></tr>
+<tr><td colspan="2"><div class="empty-bar-outer"><div class="empty-bar-inner" style="width:{{ sample.pct_close }}"></div><div class="bar-text">&nbsp;</div></div></td></tr>
 
-<tr><td class="freshLabelCell"></td><td class="freshValueCell">&nbsp;</td></tr>
-<tr><td colspan="2"><div class="bar-outer"><div class="bar-inner" style="width:{{ sample.pct_cancel }}"></div><div class="bar-text">{{ sample.pct_cancel }}%</div></div></td></tr>
+<tr><td class="freshLabelCell">&nbsp;</td><td class="freshValueCell">&nbsp;</td></tr>
+<tr><td colspan="2"><div class="empty-bar-outer"><div class="empty-bar-inner" style="width:{{ sample.pct_cancel }}"></div><div class="bar-text">&nbsp;</div></div></td></tr>
 
-<tr><td class="freshLabelCell"></td><td class="freshValueCell">&nbsp;</td></tr>
-<tr><td colspan="2"><div class="bar-outer"><div class="bar-inner" style="width:{{ sample.pct_rfan }}"></div><div class="bar-text">{{ sample.pct_rfan }}%</div></div></td></tr>
+<tr><td class="freshLabelCell">&nbsp;</td><td class="freshValueCell">&nbsp;</td></tr>
+<tr><td colspan="2"><div class="empty-bar-outer"><div class="empty-bar-inner" style="width:{{ sample.pct_rfan }}"></div><div class="bar-text">&nbsp;</div></div></td></tr>
 
-<tr><td class="freshLabelCell"><b></b></td><td class="freshValueCell"><b>&nbsp;</b></td></tr>
+<tr><td class="freshLabelCell">&nbsp;<b></b></td><td class="freshValueCell"><b>&nbsp;</b></td></tr>
 </table>
 
 <div class="sectionBox">
@@ -335,27 +377,27 @@ body { margin:0; padding:0; }
 <div class="freshBody">
 
 <div class="freshChartContainer">
-    <canvas id="freshProgressChart"></canvas>
+    <canvas id="returnProgressChart"></canvas>
     <div class="freshChartText">{{ sr.overall_pct }}% of Overall Inventory</div>
     <div class="freshChartSubText">
-        (Inventory: {{ sr.total|intcomma }} / Meter: {{ kpi_meter|intcomma }})
+        (Inventory: {{ sr.sales_return|intcomma }} / Meter: {{ kpi_meter|intcomma }})
     </div>
 </div>
 
 <table width="100%">
-<tr><td class="freshLabelCell">Return :</td><td class="freshValueCell">{{ sr.sample|intcomma }}</td></tr>
-<tr><td colspan="2"><div class="bar-outer"><div class="bar-inner" style="width:{{ sr.pct_open }}"></div><div class="bar-text">{{ sr.pct_open }}%</div></div></td></tr>
+<tr><td class="freshLabelCell">Return :</td><td class="freshValueCell">{{ sr.sales_return|intcomma }}</td></tr>
+<tr><td colspan="2"><div class="bar-outer"><div class="bar-inner" style="width:100%; background:#4caf50;"></div><div class="bar-text">100%</div></div></td></tr>
 
-<tr><td class="freshLabelCell"></td><td class="freshValueCell">&nbsp;</td></tr>
-<tr><td colspan="2"><div class="bar-outer"><div class="bar-inner" style="width:{{ sr.pct_close }}"></div><div class="bar-text">{{ sr.pct_close }}%</div></div></td></tr>
+<tr><td class="freshLabelCell">&nbsp;</td><td class="freshValueCell">&nbsp;</td></tr>
+<tr><td colspan="2"><div class="empty-bar-outer"><div class="empty-bar-inner" style="width:{{ sample.pct_close }}"></div><div class="bar-text">&nbsp;</div></div></td></tr>
 
-<tr><td class="freshLabelCell"></td><td class="freshValueCell">&nbsp;</td></tr>
-<tr><td colspan="2"><div class="bar-outer"><div class="bar-inner" style="width:{{ sr.pct_cancel }}"></div><div class="bar-text">{{ sr.pct_cancel }}%</div></div></td></tr>
+<tr><td class="freshLabelCell">&nbsp;</td><td class="freshValueCell">&nbsp;</td></tr>
+<tr><td colspan="2"><div class="empty-bar-outer"><div class="empty-bar-inner" style="width:{{ sample.pct_cancel }}"></div><div class="bar-text">&nbsp;</div></div></td></tr>
 
-<tr><td class="freshLabelCell"></td><td class="freshValueCell">&nbsp;</td></tr>
-<tr><td colspan="2"><div class="bar-outer"><div class="bar-inner" style="width:{{ sr.pct_rfan }}"></div><div class="bar-text">{{ sr.pct_rfan }}%</div></div></td></tr>
+<tr><td class="freshLabelCell">&nbsp;</td><td class="freshValueCell">&nbsp;</td></tr>
+<tr><td colspan="2"><div class="empty-bar-outer"><div class="empty-bar-inner" style="width:{{ sample.pct_rfan }}"></div><div class="bar-text">&nbsp;</div></div></td></tr>
 
-<tr><td class="freshLabelCell"><b></b></td><td class="freshValueCell"><b>&nbsp;</b></td></tr>
+<tr><td class="freshLabelCell">&nbsp;<b></b></td><td class="freshValueCell"><b>&nbsp;</b></td></tr>
 </table>
 
 <div class="sectionBox">
@@ -420,18 +462,60 @@ body { margin:0; padding:0; }
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-    new Chart(document.getElementById("freshProgressChart"), {
-        type: "doughnut",
-        data: {
-            datasets: [{
-                data: [{{ fresh.total }}, {{ kpi_meter }} - {{ fresh.total }}],
-                backgroundColor: ["#4caf50","#e0e0e0"],
-                borderWidth:0
-            }]
-        },
-        options: { cutout:"72%", plugins:{ legend:{ display:false } } }
-    });
+
+    function buildChart(canvasId, inventory, total) {
+        const el = document.getElementById(canvasId);
+        if (!el) return;
+
+        inventory = Number(inventory) || 0;
+        total = Number(total) || 0;
+
+        const remaining = Math.max(total - inventory, 0);
+
+        new Chart(el, {
+            type: "doughnut",
+            data: {
+                datasets: [{
+                    data: [inventory, remaining],
+                    backgroundColor: ["#4caf50", "#e0e0e0"],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                cutout: "72%",
+                plugins: { legend: { display: false } }
+            }
+        });
+    }
+
+    buildChart(
+        "freshProgressChart",
+        {{ fresh.total|default:0 }},
+        {{ kpi_meter|default:0 }}
+    );
+
+    buildChart(
+        "stockProgressChart",
+        {{ stock.total|default:0 }},
+        {{ kpi_meter|default:0 }}
+    );
+
+    buildChart(
+        "sampleProgressChart",
+        {{ sample.sample|default:0 }},
+        {{ kpi_meter|default:0 }}
+    );
+
+    buildChart(
+        "returnProgressChart",
+        {{ sr.sales_return|default:0 }},
+        {{ kpi_meter|default:0 }}
+    );
+
 });
 </script>
+

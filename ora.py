@@ -41,7 +41,7 @@ def get_pg_connection():
 oracle_conn = get_oracle_connection()
 oracle_cur = oracle_conn.cursor()
 
-oracle_cur.execute("SELECT * FROM DB_INS_DATA")
+oracle_cur.execute("SELECT * FROM yrn_ason_tab_with_value")
 rows = oracle_cur.fetchall()
 
 # 🔹 Get column names dynamically
@@ -58,7 +58,7 @@ columns_sql = ", ".join(columns)
 placeholders = ", ".join(["%s"] * len(columns))
 
 insert_sql = f"""
-    INSERT INTO DB_INS_DATA ({columns_sql})
+    INSERT INTO yrn_ason_tab_with_value ({columns_sql})
     VALUES ({placeholders})
 """
 

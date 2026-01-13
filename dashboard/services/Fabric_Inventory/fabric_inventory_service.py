@@ -1,4 +1,6 @@
 from django.db import connection
+from dashboard.utils.formatters import short_number
+
 
 def get_fabric_inventory_kpis():
     with connection.cursor() as cursor:
@@ -52,7 +54,7 @@ def get_fabric_inventory_kpis():
 
     return {
         "kpi_meter": total_meter,
-        "kpi_amount": amount,
+        "kpi_amount": short_number(amount),
         "kpi_grade_a": grade_a,
         "kpi_grade_b": grade_b,
         "kpi_grade_c": grade_c,
