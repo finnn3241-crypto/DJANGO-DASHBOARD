@@ -1,3 +1,6 @@
+{% extends "dashboard/base.html" %}
+{% block content %}
+
 {% load humanize %}
 
 <style>
@@ -194,3 +197,4 @@ animatedDonut('chartLocal', {{ local.curr_dispatch|cut:"," }}, {{ local.total_pl
 animatedDonut('chartTotal', {{ total.curr_dispatch|cut:"," }}, {{ 0 }}, '#ff0000')
 
 </script>
+{% endblock %}

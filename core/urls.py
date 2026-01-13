@@ -23,7 +23,7 @@ urlpatterns = [
     path("fabric/", fabric, name="fabric"),
     path("sample/", sample, name="sample") ,  
     path("oih/", oih, name="oih"), 
-    path("warp/", prod, name="warp") , 
+    path("prod/", prod, name="prod") , 
     path("yarn/", yarn, name="yarn"),
     path("", mainPage, name="mainPage"),               
 ]

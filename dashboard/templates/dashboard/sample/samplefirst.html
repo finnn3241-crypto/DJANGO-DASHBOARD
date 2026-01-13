@@ -1,3 +1,7 @@
+{% extends "dashboard/base.html" %}
+
+{% block content %}
+
 {% load humanize %}
 <style>
 .SideBySideWrap{
@@ -145,3 +149,5 @@ td{
 {% include "dashboard/sample/unit_dashboard.html" %}
 
 {% include "dashboard/sample/top20.html" %}
+
+{% endblock %}

@@ -1,3 +1,6 @@
+{% extends "dashboard/base.html" %}
+{% block content %}
+
 {% load humanize %}
 
 <style>
@@ -57,9 +60,7 @@
     <span class="card-value">{{ kpi_grade_c|intcomma }}</span>
     <span class="card-text">Grade C</span>
 </div>
-
 </div>
 
 {% include "dashboard/fabric_inventory/fresh_card.html" %}
-
-
+{% endblock %}

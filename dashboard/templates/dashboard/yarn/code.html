@@ -8,13 +8,19 @@
   }
 </style>
 
-<div class="max-w-[1400px] mx-auto mt-5 mb-5 px-4 text-center">
+{% extends 'dashboard/base.html' %}   
+{% block content %}
+
+<div class="max-w-full mx-auto mt-5 mb-5 px-4 text-center">
     <h1 class="font-bold text-2xl md:text-3xl uppercase border-b border-gray-300 pb-3 tracking-wider text-slate-800">
         Yarn Inventory
     </h1>
 </div>
+
+
+
 <div class="p-4">
-  <div id="top-kpi-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-4 mb-6">
+  <div id="top-kpi-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-7 gap-4 mb-6">
     
     <div class="kpi-gradient p-5 rounded-lg shadow-lg text-white flex flex-col">
       <span class="text-3xl font-black block mb-2">12345{{ v_bal_lbs }}</span>
@@ -55,7 +61,7 @@
 </div>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<div class="max-w-[1400px] mx-auto p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+<div class="max-w-full mx-auto p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
     {% comment %} 0-6 Months Aging {% endcomment %}
     <div class="bg-[#eceef1] rounded-xl shadow-md overflow-hidden flex flex-col border border-gray-200">
         
@@ -681,3 +687,5 @@
         });
     });
 </script>
+
+{% endblock %}

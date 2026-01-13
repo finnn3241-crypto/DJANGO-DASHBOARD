@@ -1,8 +1,8 @@
 from django.shortcuts import render
 
-from .services.dispatch_service import get_dispatch_data
-from .services.Local_dispatch import get_dispatch_data_L
-from .services.total_dispatch import get_dispatch_data_tot
+from dashboard.services.dispatch.dispatch_service import get_dispatch_data
+from dashboard.services.dispatch.Local_dispatch import get_dispatch_data_L
+from dashboard.services.dispatch.total_dispatch import get_dispatch_data_tot
 from dashboard.services.Fabric_Inventory.fabric_inventory_service import (
     get_fabric_inventory_kpis,
     get_fresh_data,
@@ -54,7 +54,7 @@ def home(request):
     #total card
     data.update(get_dispatch_data_tot())
 
-    return render(request, "dashboard/home.html", data)
+    return render(request, "dashboard/dispatch/home.html", data)
 
 
 

@@ -1,3 +1,7 @@
+{% extends "dashboard/base.html" %}  
+
+{% block content %}
+
 {% load humanize %}
 
 <style>
@@ -87,7 +91,7 @@
     <div class="chart-subtext">(Dispatch: {{ curr_dispatch|intcomma }} mtr / Plan: {{ total_plan|intcomma }} mtr)</div>
 </div>
 
-{% include "dashboard/export_card.html" %}
+{% include "dashboard/dispatch/export_card.html" %}
 
 </div>
 
@@ -101,7 +105,7 @@
     <div class="chart-subtext">(Dispatch: {{ curr_dispatch_L|intcomma }} mtr / Plan: {{ total_plan_L|intcomma }} mtr)</div>
 </div>
 
-{% include "dashboard/local_card.html" %}
+{% include "dashboard/dispatch/local_card.html" %}
 
 </div>
 
@@ -115,7 +119,7 @@
     <div class="chart-subtext">(Dispatch: {{ curr_dispatch_tot|intcomma }} mtr / Plan: {{ total_plan_tot|intcomma }} mtr)</div>
 </div>
 
-{% include "dashboard/total_card.html" %}
+{% include "dashboard/dispatch/total_card.html" %}
 
 </div>
 
@@ -147,3 +151,4 @@ buildChart("chart1");
 buildChart("chart2");
 buildChart("chart3");
 </script>
+{% endblock %}
