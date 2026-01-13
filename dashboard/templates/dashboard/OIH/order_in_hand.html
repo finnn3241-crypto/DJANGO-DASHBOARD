@@ -4,20 +4,50 @@
 {% load humanize %}
 
 <style>
-body{background:#f4f6f9}
-.cards{display:flex;gap:26px;justify-content:center;flex-wrap:wrap}
 
-.export-card-wrapper{width:480px}
+body { 
+    margin:0; 
+    padding:0; 
+    background:#f5f6f8; 
+    font-family: 'IBM Plex Sans', system-ui, sans-serif;  
+}
+
+.cards{
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px,1fr));
+    gap:24px;
+    padding:20px;
+    max-width:1400px;
+    margin:0 auto;
+}
+
+.export-card-wrapper{
+    background:#eceef1;
+    border-radius:16px;
+    box-shadow:0 6px 14px rgba(0,0,0,.12);
+    overflow:hidden;
+    border:1px solid #d8dbe0;
+    display:flex;
+    flex-direction:column;
+}
+
+
+
 .export-title{
-    background:linear-gradient(135deg,#444,#222);
-    color:#fff;font-weight:700;font-size:19px;
-    text-align:center;padding:12px 0;
-    border-radius:12px 12px 0 0;
+    background:#8fbc8f;
+    color:#000000;
+    text-align:center;
+    padding:12px;
+    font-weight:700;
+    font-size:25px;
+    letter-spacing:.8px;
+    text-transform:uppercase;
 }
 .cardInv{
-    background:#eceef1;border-radius:0 0 12px 12px;
+    background:#e5e7eb;border-radius:16px;
     box-shadow:0 6px 14px rgba(0,0,0,.18);
     padding-bottom:20px;
+    border: 1px solid #eee;
 }
 
 .chart-container{text-align:center;margin:22px 0}
@@ -29,21 +59,38 @@ body{background:#f4f6f9}
 }
 
 .chart-container b{font-size:17px}
-.stat-line{font-weight:600;margin-top:6px;color:#333}
+.stat-line{font-weight:700;margin-top:8px; font-size:16px;}
+.stat-line-second{color:#2d2d2d; font-size:14px;}
 
 .valueCell{font-size:30px;font-weight:700;text-align:center}
 .valueCelltxt{font-size:21px;font-weight:700;text-align:center;color:#b10000}
 
 .mgr-row{margin:10px 16px}
 .mgr-name{display:flex;justify-content:space-between;font-weight:600}
-.bar-outer{background:#777;border-radius:20px;height:14px;margin-top:4px}
+.bar-outer{background:#e5e7eb;border-radius:20px;height:14px;margin-top:4px}
 .bar-inner{height:14px;border-radius:20px;font-size:12px;font-weight:700;text-align:center}
 
 .cardHeader{
-    background:#714b67;color:white;font-weight:700;
-    font-size:18px;padding:9px;text-align:center;
-    border-radius:6px;margin:10px 12px
+    text-align: center;
+    font-weight: 800;
+    font-size: 14px;
+    padding: 6px 10px;
+    border-radius: 12px;
+    margin: 0 auto 10px;
+    width: max-content;
+    letter-spacing: .6px;
+    background: #82d9f3;
 }
+
+.sectionBox{
+    background:#fff;
+    border-radius:16px;
+    padding:12px;
+    margin-top:14px;
+    box-shadow:0 2px 6px rgba(0,0,0,.08);
+    border:1px solid #eee;
+}   
+
 </style>
 
 <script src="https://cdn.tailwindcss.com"></script>
@@ -62,19 +109,20 @@ body{background:#f4f6f9}
 <!-- ================= EXPORT CARD ================= -->
 <div class="export-card-wrapper">
 <div class="export-title">EXPORT</div>
-<div class="cardInv">
-
+<div className="chart-section">
 <div class="chart-container">
 <b>Order In Hand</b>
 <canvas id="chartExport" width="90" height="90"></canvas>
 <div class="stat-line">{{ export.percentage }}% of Overall Order In Hand</div>
-<div class="stat-line">({{ export.curr_dispatch }} mtr / {{ export.total_plan }} mtr)</div>
+<div class="stat-line-second">({{ export.curr_dispatch }} mtr / {{ export.total_plan }} mtr)</div>
 </div>
+
+<div class="sectionBox">
 
 <div class="mgr-row">
 <div class="mgr-name">Matched Fabric Inventory <span>{{ export.inventory }}</span></div>
 <div class="bar-outer">
-<div class="bar-inner" style="width:{{ export.inv_per }}%;background:#ddd60a">{{ export.inv_per }}%</div>
+<div class="bar-inner" style="width:{{ export.inv_per }}%;background:#e67e22">{{ export.inv_per }}%</div>
 </div>
 </div>
 
@@ -87,17 +135,21 @@ body{background:#f4f6f9}
 <tr><td class="valueCelltxt">{{ export.days }} DAYS</td></tr>
 </table>
 
+<div class="sectionBox" style="margin-top:20px">
 <div class="cardHeader">MANAGER WISE</div>
 {% for m in export.managers %}
 <div class="mgr-row">
 <div class="mgr-name">{{ m.manager_name }} <span>{{ m.dispatch_exp }}</span></div>
 <div class="bar-outer">
-<div class="bar-inner" style="width:{{ m.per }}%;background:#ddd60a">{{ m.per }}%</div>
+<div class="bar-inner" style="width:{{ m.per }}%;background:#e67e22">{{ m.per }}%</div>
 </div>
 </div>
 {% endfor %}
+</div>
 
 </div>
+</div>
+
 </div>
 
 <!-- ================= LOCAL CARD ================= -->
@@ -109,13 +161,14 @@ body{background:#f4f6f9}
 <b>Order In Hand</b>
 <canvas id="chartLocal" width="90" height="90"></canvas>
 <div class="stat-line">{{ local.percentage }}% of Overall Order In Hand</div>
-<div class="stat-line">({{ local.curr_dispatch }} mtr / {{ local.total_plan }} mtr)</div>
+<div class="stat-line-second">({{ local.curr_dispatch }} mtr / {{ local.total_plan }} mtr)</div>
 </div>
 
+<div class="sectionBox">
 <div class="mgr-row">
 <div class="mgr-name">Matched Fabric Inventory <span>{{ local.inventory }}</span></div>
 <div class="bar-outer">
-<div class="bar-inner" style="width:{{ local.inv_per }}%;background:#ddd60a">{{ local.inv_per }}%</div>
+<div class="bar-inner" style="width:{{ local.inv_per }}%;background:#e67e22">{{ local.inv_per }}%</div>
 </div>
 </div>
 
@@ -128,16 +181,18 @@ body{background:#f4f6f9}
 <tr><td class="valueCelltxt">{{ local.days }} DAYS</td></tr>
 </table>
 
+<div class="sectionBox" style="margin-top:20px">
 <div class="cardHeader">MANAGER WISE</div>
 {% for m in local.managers %}
 <div class="mgr-row">
 <div class="mgr-name">{{ m.manager_name }} <span>{{ m.dispatch_exp }}</span></div>
 <div class="bar-outer">
-<div class="bar-inner" style="width:{{ m.per }}%;background:#ddd60a">{{ m.per }}%</div>
+<div class="bar-inner" style="width:{{ m.per }}%;background:#e67e22">{{ m.per }}%</div>
 </div>
 </div>
 {% endfor %}
-
+</div>
+</div>
 </div>
 </div>
 
@@ -150,13 +205,15 @@ body{background:#f4f6f9}
 <b>Order In Hand</b>
 <canvas id="chartTotal" width="90" height="90"></canvas>
 <div class="stat-line">{{ total.percentage }}% of Overall Order In Hand</div>
-<div class="stat-line">Total Export/Local Order In Hand: {{ total.total_plan }} mtr</div>
+<div class="stat-line-second">Total Export/Local Order In Hand: {{ total.total_plan }} mtr</div>
 </div>
+
+<div class="sectionBox">
 
 <div class="mgr-row">
 <div class="mgr-name">Matched Fabric Inventory <span>{{ total.inventory }}</span></div>
 <div class="bar-outer">
-<div class="bar-inner" style="width:{{ total.inv_per }}%;background:#ddd60a">{{ total.inv_per }}%</div>
+<div class="bar-inner" style="width:{{ total.inv_per }}%;background:#e67e22">{{ total.inv_per }}%</div>
 </div>
 </div>
 
@@ -169,19 +226,20 @@ body{background:#f4f6f9}
 <tr><td class="valueCelltxt">{{ total.days }} DAYS</td></tr>
 </table>
 
+<div class="sectionBox" style="margin-top:20px">
 <div class="cardHeader">MANAGER WISE</div>
 {% for m in total.managers %}
 <div class="mgr-row">
 <div class="mgr-name">{{ m.manager_name }} <span>{{ m.dispatch_exp }}</span></div>
 <div class="bar-outer">
-<div class="bar-inner" style="width:{{ m.per }}%;background:#ddd60a">{{ m.per }}%</div>
+<div class="bar-inner" style="width:{{ m.per }}%;background:#e67e22">{{ m.per }}%</div>
 </div>
 </div>
 {% endfor %}
-
 </div>
 </div>
-
+</div>
+</div>
 </div>
 
 <script>

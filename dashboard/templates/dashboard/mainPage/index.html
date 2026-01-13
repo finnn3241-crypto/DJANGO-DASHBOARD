@@ -4,10 +4,12 @@
 <style>
     /* Specific styles for the Dashboard Cards only */
     .grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-        gap: 24px;
-        padding: 20px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        {% comment %} padding: 5px; {% endcomment %}
+        /* This line centers the items in the last row if they don't fill the space */
+        justify-content: center; 
     }
 
     .card {
@@ -21,6 +23,10 @@
         flex-direction: column;
         justify-content: space-between;
         transition: all 0.3s ease;
+        
+        /* This ensures each card stays around the 320px size you wanted */
+        flex: 1 1 320px; 
+        max-width: calc(25% - 24px); /* Forces 4 items per row on large screens */
     }
 
     .card:hover {
@@ -66,6 +72,19 @@
     .c-util { color: #eab308; background: #fefce8; }
     .c-samp { color: #ec4899; background: #fdf2f8; }
     .c-yarn { color: #06b6d4; background: #ecfeff; }
+
+/* Tablet/Mobile adjustment so they don't look weird when centering */
+    @media (max-width: 1100px) {
+        .card {
+            max-width: calc(50% - 24px);
+        }
+    }
+    @media (max-width: 640px) {
+        .card {
+            max-width: 100%;
+        }
+    }
+
 </style>
 
 <div class="p-6">
