@@ -33,8 +33,8 @@ body {
 
 
 .export-title{
-    background:#8fbc8f;
-    color:#000000;
+    background:#5e0045;
+    color:#fff;
     text-align:center;
     padding:12px;
     font-weight:700;
@@ -132,8 +132,7 @@ body {
 <div class="export-title">EXPORT</div>
 <div className="chart-section">
 <div class="chart-container">
-<b>Order In Hand</b>
-<canvas id="chartExport" width="90" height="90"></canvas>
+<canvas id="chartExport" width="90" height="90" ></canvas>
 <div class="stat-line">{{ export.percentage }}% of Overall Order In Hand</div>
 <div class="stat-line-second">({{ export.curr_dispatch }} mtr / {{ export.total_plan }} mtr)</div>
 </div>
@@ -182,7 +181,6 @@ body {
 <div class="cardInv">
 
 <div class="chart-container">
-<b>Order In Hand</b>
 <canvas id="chartLocal" width="90" height="90"></canvas>
 <div class="stat-line">{{ local.percentage }}% of Overall Order In Hand</div>
 <div class="stat-line-second">({{ local.curr_dispatch }} mtr / {{ local.total_plan }} mtr)</div>
@@ -228,7 +226,6 @@ body {
 <div class="cardInv">
 
 <div class="chart-container">
-<b>Order In Hand</b>
 <canvas id="chartTotal" width="90" height="90"></canvas>
 <div class="stat-line">{{ total.percentage }}% of Overall Order In Hand</div>
 <div class="stat-line-second">Total Export/Local Order In Hand: {{ total.total_plan }} mtr</div>
