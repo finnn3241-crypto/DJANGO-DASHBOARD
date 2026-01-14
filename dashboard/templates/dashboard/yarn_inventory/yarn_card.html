@@ -92,7 +92,7 @@ body { margin:0; padding:0; background:#f5f6f8; font-family: 'IBM Plex Sans', sy
     display:flex;
     align-items:center;
     justify-content:center;
-    font-size:11px;
+    font-size:14px;
     font-weight:700;
 }
 
@@ -115,10 +115,10 @@ canvas{ width:96px !important; height:96px !important; margin:auto; }
         <canvas id="ProgressChart1"></canvas>
     </div>
     <div class="text-center mt-3">
-        <p class="text-sm font-bold text-gray-800">
+        <p style="font-weight:700; font-size:16px; margin-top:8px;">
             {{ aging.overall_pct }}% of Overall Inventory
         </p>
-        <p class="text-xs text-gray-500 font-semibold">
+        <p style="font-size:14px; color:#2d2d2d;">
             (Inv: {{ aging.age_lbs|intcomma }} / LBS: {{ aging.total_lbs|intcomma }})
         </p>
     </div>
@@ -144,7 +144,7 @@ canvas{ width:96px !important; height:96px !important; margin:auto; }
 <div class="h-4 rounded-full transition-all duration-700"
      style="width: {{ store.pct_fresh }}%; background-color: {{ store.color_fresh }};">
 </div>
-<span class="absolute inset-0 flex justify-center items-center text-[10px] font-black">
+<span class="absolute inset-0 flex justify-center items-center text-[14px] font-black">
 {{ store.pct_fresh }}%
 </span>
 </div>
@@ -159,7 +159,7 @@ canvas{ width:96px !important; height:96px !important; margin:auto; }
 <div class="h-4 rounded-full transition-all duration-700"
      style="width: {{ store.pct_sale }}%; background-color: {{ store.color_sale }};">
 </div>
-<span class="absolute inset-0 flex justify-center items-center text-[10px] font-black">
+<span class="absolute inset-0 flex justify-center items-center text-[14px] font-black">
 {{ store.pct_sale }}%
 </span>
 </div>
@@ -182,10 +182,10 @@ canvas{ width:96px !important; height:96px !important; margin:auto; }
         <canvas id="ProgressChart2"></canvas>
     </div>
     <div class="text-center mt-3">
-        <p class="text-sm font-bold text-gray-800">
+        <p style="font-weight:700; font-size:16px; margin-top:8px;">
             {{ aging_6_12.overall_pct }}% of Overall Inventory
         </p>
-        <p class="text-xs text-gray-500 font-semibold">
+        <p style="font-size:14px; color:#2d2d2d;">
             (Inv: {{ aging_6_12.age_lbs|intcomma }} / LBS: {{ aging_6_12.total_lbs|intcomma }})
         </p>
     </div>
@@ -211,7 +211,7 @@ canvas{ width:96px !important; height:96px !important; margin:auto; }
 <div class="h-4 rounded-full transition-all duration-700"
      style="width: {{ store.pct_fresh }}%; background-color: {{ store.color_fresh }};">
 </div>
-<span class="absolute inset-0 flex justify-center items-center text-[10px] font-black">
+<span class="absolute inset-0 flex justify-center items-center text-[14px] font-black">
 {{ store.pct_fresh }}%
 </span>
 </div>
@@ -226,7 +226,7 @@ canvas{ width:96px !important; height:96px !important; margin:auto; }
 <div class="h-4 rounded-full transition-all duration-700"
      style="width: {{ store.pct_sale }}%; background-color: {{ store.color_sale }};">
 </div>
-<span class="absolute inset-0 flex justify-center items-center text-[10px] font-black">
+<span class="absolute inset-0 flex justify-center items-center text-[14px] font-black">
 {{ store.pct_sale }}%
 </span>
 </div>
@@ -251,10 +251,10 @@ canvas{ width:96px !important; height:96px !important; margin:auto; }
         <canvas id="ProgressChart3"></canvas>
     </div>
     <div class="text-center mt-3">
-        <p class="text-sm font-bold text-gray-800">
+        <p style="font-weight:700; font-size:16px; margin-top:8px;">
             {{ aging_1_2.overall_pct }}% of Overall Inventory
         </p>
-        <p class="text-xs text-gray-500 font-semibold">
+        <p style="font-size:14px; color:#2d2d2d;">
             (Inv: {{ aging_1_2.age_lbs|intcomma }} / LBS: {{ aging_1_2.total_lbs|intcomma }})
         </p>
     </div>
@@ -280,7 +280,7 @@ canvas{ width:96px !important; height:96px !important; margin:auto; }
 <div class="h-4 rounded-full transition-all duration-700"
      style="width: {{ store.pct_fresh }}%; background-color: {{ store.color_fresh }};">
 </div>
-<span class="absolute inset-0 flex justify-center items-center text-[10px] font-black">
+<span class="absolute inset-0 flex justify-center items-center text-[14px] font-black">
 {{ store.pct_fresh }}%
 </span>
 </div>
@@ -295,7 +295,7 @@ canvas{ width:96px !important; height:96px !important; margin:auto; }
 <div class="h-4 rounded-full transition-all duration-700"
      style="width: {{ store.pct_sale }}%; background-color: {{ store.color_sale }};">
 </div>
-<span class="absolute inset-0 flex justify-center items-center text-[10px] font-black">
+<span class="absolute inset-0 flex justify-center items-center text-[14px] font-black">
 {{ store.pct_sale }}%
 </span>
 </div>
@@ -320,10 +320,10 @@ canvas{ width:96px !important; height:96px !important; margin:auto; }
         <canvas id="ProgressChart4"></canvas>
     </div>
     <div class="text-center mt-3">
-        <p class="text-sm font-bold text-gray-800">
+        <p style="font-weight:700; font-size:16px; margin-top:8px;">
             {{ aging_2.overall_pct }}% of Overall Inventory
         </p>
-        <p class="text-xs text-gray-500 font-semibold">
+        <p style="font-size:14px; color:#2d2d2d;">
             (Inv: {{ aging_2.age_lbs|intcomma }} / LBS: {{ aging_2.total_lbs|intcomma }})
         </p>
     </div>
@@ -349,7 +349,7 @@ canvas{ width:96px !important; height:96px !important; margin:auto; }
 <div class="h-4 rounded-full transition-all duration-700"
      style="width: {{ store.pct_fresh }}%; background-color: {{ store.color_fresh }};">
 </div>
-<span class="absolute inset-0 flex justify-center items-center text-[10px] font-black">
+<span class="absolute inset-0 flex justify-center items-center text-[14px] font-black">
 {{ store.pct_fresh }}%
 </span>
 </div>
@@ -364,7 +364,7 @@ canvas{ width:96px !important; height:96px !important; margin:auto; }
 <div class="h-4 rounded-full transition-all duration-700"
      style="width: {{ store.pct_sale }}%; background-color: {{ store.color_sale }};">
 </div>
-<span class="absolute inset-0 flex justify-center items-center text-[10px] font-black">
+<span class="absolute inset-0 flex justify-center items-center text-[14px] font-black">
 {{ store.pct_sale }}%
 </span>
 </div>

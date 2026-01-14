@@ -18,28 +18,33 @@
 </div>
 
 <!-- Dispatch Summary Table -->
-<table style="margin:15px 0;">
-    <tr>
-        <td style="padding:4px 0; padding-right: 120px;">Previous Day Dispatch:</td>
-        <td style="text-align:right;font-weight:600;padding:4px 0;">{{ prev_day_dispatch_tot|intcomma }}</td>
-    </tr>
-    <tr>
-        <td style="padding:4px 0; padding-right: 120px;">Current Day Planned:</td>
-        <td style="text-align:right;font-weight:600;padding:4px 0;">{{ curr_day_plan_tot|intcomma }}</td>
-    </tr>
-    <tr>
-        <td style="padding:4px 0; padding-right: 120px;">Current Month Planned:</td>
-        <td style="text-align:right;font-weight:600;padding:4px 0;">{{ total_plan_tot|intcomma }}</td>
-    </tr>
-    <tr>
-        <td style="padding:4px 0; padding-right: 120px;">Current Month Dispatch:</td>
-        <td style="text-align:right;font-weight:600;padding:4px 0;">{{ curr_dispatch_tot|intcomma }}</td>
-    </tr>
-    <tr>
-        <td style="padding:4px 0; padding-right: 120px;">Balance Current Month:</td>
-        <td style="text-align:right;font-weight:600;padding:4px 0;">{{ balance_plan_tot|intcomma }}</td>
-    </tr>
-</table>
+<div class="summaryBox">
+
+  <div class="summaryRow">
+    <span class="label">Previous Day Dispatch :</span>
+    <span class="value">{{ prev_day_dispatch_tot|intcomma }}</span>
+  </div>
+
+  <div class="summaryRow">
+    <span class="label">Current Day Planned :</span>
+    <span class="value">{{ curr_day_plan_tot|intcomma }}</span>
+  </div>
+
+  <div class="summaryRow">
+    <span class="label">Current Month Planned :</span>
+    <span class="value">{{ total_plan_tot|intcomma }}</span>
+  </div>
+
+  <div class="summaryRow">
+    <span class="label">Current Month Dispatch :</span>
+    <span class="value">{{ curr_dispatch_tot|intcomma }}</span>
+  </div>
+
+  <div class="summaryRow">
+    <span class="label">Balance Current Month :</span>
+    <span class="value">{{ balance_plan_tot|intcomma }}</span>
+  </div>
+</div>
 
 <!-- Manager Wise Section -->
 <div class="sectionBox" style="margin-top:20px;">

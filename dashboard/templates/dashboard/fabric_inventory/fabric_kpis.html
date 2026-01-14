@@ -1,41 +1,84 @@
-{% extends "dashboard/base.html" %}
+
+{% extends "dashboard/base.html" %}  
+
 {% block content %}
 
 {% load humanize %}
 
+
 <style>
-body {font-family: 'IBM Plex Sans', system-ui, sans-serif;  }
+body { 
+    font-family: 'IBM Plex Sans', system-ui, sans-serif;  
+}
 
 #kpi-container {
-    display: flex;
-    margin-bottom: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 14px;
+    margin-bottom: 24px;
+    width: 100%;
+    padding: 0 20px;
+
 }
+
+
+/* KPI Card */
 .kpi-card {
-    flex: 1;
-    box-shadow: 1px 1px 3px rgba(0,0,0,0.75);
-    padding: 1em;
-    border-radius: 0.3em;
-    font-family: sans-serif;
-    width: 240px;
-    min-width: 180px;
-    margin-left: 0.5em;
-    margin-top: 0.5em;
-    color: #fff;
+    flex: 1 1 0;
+    width: 100%;
+    background: #5fb6bd;
+    padding: 18px 16px;
+    border-radius: 10px;
+    font-family: 'Segoe UI', sans-serif;
+    color: #ffffff;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    transition: all 0.2s ease-in-out;
 }
+
+.kpi-card:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 14px rgba(0,0,0,0.15);
+}
+
+/* Replacing your old gradient */
 .kpi-bg {
-    background: linear-gradient(129deg, #254d5c, #90f5ff);
+    background: #2f8f94;
 }
+
+/* Individual KPI Colors */
+.kpi-card:nth-child(1) .kpi-bg,
+.kpi-card:nth-child(1) { background:#2f8f94; } /* Meters */
+
+.kpi-card:nth-child(2) .kpi-bg,
+.kpi-card:nth-child(2) { background:#347fa2; } /* Amount */
+
+.kpi-card:nth-child(3) .kpi-bg,
+.kpi-card:nth-child(3) { background:#2e9b78; } /* Grade A */
+
+.kpi-card:nth-child(4) .kpi-bg,
+.kpi-card:nth-child(4) { background:#3b8fc1; } /* Grade B */
+
+.kpi-card:nth-child(5) .kpi-bg,
+.kpi-card:nth-child(5) { background:#5a6fd1; } /* Grade C */
+
+/* Value */
 .card-value {
-    
-    font-size: 30px;
-    font-weight: bolder;
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
 }
+
+/* Label */
 .card-text {
     display: block;
-    font-weight: 700;
-    font-size: 22px;
+    font-size: 18px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    opacity: 0.95;
 }
 </style>
+
 
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -75,4 +118,5 @@ body {font-family: 'IBM Plex Sans', system-ui, sans-serif;  }
 </div>
 
 {% include "dashboard/fabric_inventory/fresh_card.html" %}
+
 {% endblock %}

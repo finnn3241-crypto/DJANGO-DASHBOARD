@@ -119,6 +119,14 @@ def sample_first():
         month_category = dictfetchall(cur)
 
     # ---------- MANAGER & CATEGORY CALCULATIONS ----------
+    for row in prev_day_reason:
+        row["amount"] = round(row["qty"] * rate)
+        row["per"] = round((row["qty"] / prev_day_total) * 100, 2) if prev_day_total else 0
+
+    for row in month_reason:
+        row["amount"] = round(row["qty"] * rate)
+        row["per"] = round((row["qty"] / month_total) * 100, 2) if month_total else 0
+
     for row in prev_day_manager:
         row["amount"] = round(row["qty"] * rate)
         row["per"] = round((row["qty"] / prev_day_total) * 100, 2) if prev_day_total else 0
@@ -137,8 +145,8 @@ def sample_first():
 
     return {
         "rate": rate,
-        "prev_day_total": prev_day_total,
-        "month_total": month_total,
+        "prev_day_total": round(prev_day_total),
+        "month_total": round(month_total),
         "prev_day_reason": prev_day_reason,
         "prev_day_manager": prev_day_manager,
         "prev_day_category": prev_day_category,

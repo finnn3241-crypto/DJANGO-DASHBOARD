@@ -1,42 +1,64 @@
-{% extends "dashboard/base.html" %}
+{% extends "dashboard/base.html" %}  
 
 {% block content %}
 
 {% load humanize %}
-
 <style>
 #kpi-container {
     display: flex;
     flex-wrap: wrap;
-    margin-bottom: 20px;
+    gap: 14px;
+    margin-bottom: 24px;
+    padding: 0 20px;
 }
+
+/* KPI Card */
 .kpi-card {
     flex: 1;
-    box-shadow: 1px 1px 3px rgba(0,0,0,0.75);
-    padding: 1em;
-    border-radius: 0.3em;
-    font-family: sans-serif;
-    width: 240px;
-    min-width: 180px;
-    margin-left: 0.5em;
-    margin-top: 0.5em;
-    color: #fff;
+    min-width: 170px;
+    max-width: 210px;
+    background: #5fb6bd;
+    padding: 18px 16px;
+    border-radius: 10px;
+    font-family: 'Segoe UI', sans-serif;
+    color: #ffffff;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    transition: all 0.2s ease-in-out;
 }
-.kpi-bg {
-    background: linear-gradient(129deg, #254d5c, #90f5ff);
+
+.kpi-card:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 14px rgba(0,0,0,0.12);
 }
+
+/* KPI Colors */
+.kpi-card:nth-child(1) { background:#2f8f94; } /* LBS */
+.kpi-card:nth-child(2) { background:#3fa6ad; } /* Bags */
+.kpi-card:nth-child(3) { background:#347fa2; } /* Amount */
+.kpi-card:nth-child(4) { background:#2e9b78; } /* Fresh */
+.kpi-card:nth-child(5) { background:#3b8fc1; } /* Saleable */
+.kpi-card:nth-child(6) { background:#4c7fd1; } /* B2R LBS */
+.kpi-card:nth-child(7) { background:#5a6fd1; } /* B2R Amount */
+
+
+/* Value */
 .card-value {
-  font-size: 30px;  
-  font-weight: bolder;
-}
-.card-text {
     display: block;
+    font-size: 32px;
     font-weight: 700;
-    font-size: 22px;
+    letter-spacing: -0.3px;
+    margin-bottom: 4px;
+}
+
+/* Label */
+.card-text {
+    font-size: 18px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    opacity: 0.95;
 }
 </style>
-<script src="https://cdn.tailwindcss.com"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <div class="max-w-[1400px] mx-auto mt-5 mb-5 px-4 text-center">
     <h1 class="font-bold text-2xl md:text-3xl uppercase border-b border-gray-300 pb-3 tracking-wider text-slate-800">
@@ -46,42 +68,43 @@
 
 <div id="kpi-container">
 
-    <div class="kpi-card kpi-bg">
+    <div class="kpi-card">
         <span class="card-value">{{ kpis.kpi_lbs|intcomma }}</span>
         <span class="card-text">LBS</span>
     </div>
 
-    <div class="kpi-card kpi-bg">
+    <div class="kpi-card">
         <span class="card-value">{{ kpis.kpi_bags|intcomma }}</span>
-        <span class="card-text">BAGS</span>
+        <span class="card-text">Bags</span>
     </div>
 
-    <div class="kpi-card kpi-bg">
+    <div class="kpi-card">
         <span class="card-value">{{ kpis.kpi_amount|intcomma }}</span>
-        <span class="card-text">AMOUNT</span>
+        <span class="card-text">Amount</span>
     </div>
 
-    <div class="kpi-card kpi-bg">
+    <div class="kpi-card">
         <span class="card-value">{{ kpis.kpi_fresh|intcomma }}</span>
-        <span class="card-text">FRESH</span>
+        <span class="card-text">Fresh</span>
     </div>
 
-    <div class="kpi-card kpi-bg">
+    <div class="kpi-card">
         <span class="card-value">{{ kpis.kpi_saleable|intcomma }}</span>
-        <span class="card-text">SALEABLE</span>
+        <span class="card-text">Saleable</span>
     </div>
 
-    <div class="kpi-card kpi-bg">
+    <div class="kpi-card">
         <span class="card-value">{{ kpis.kpi_b2r_lbs|intcomma }}</span>
         <span class="card-text">B2R LBS</span>
     </div>
 
-    <div class="kpi-card kpi-bg">
+    <div class="kpi-card">
         <span class="card-value">{{ kpis.kpi_b2r_amount|intcomma }}</span>
-        <span class="card-text">B2R AMOUNT</span>
+        <span class="card-text">B2R Amount</span>
     </div>
 
 </div>
 
 {% include "dashboard/yarn_inventory/yarn_card.html" %}
+
 {% endblock %}

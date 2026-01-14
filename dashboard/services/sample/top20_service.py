@@ -91,19 +91,35 @@ def top20_data():
 
         # -------- PREVIOUS DAY : CATEGORY --------
         cur.execute("""
-            SELECT category, SUM(qty) qty FROM (
                 SELECT
-                    CASE
-                        WHEN munit IN ('FABRIC','HEADERS','PANT','NEW HANGER','HALF LEG')
-                        THEN munit ELSE 'OTHERS'
-                    END category,
-                    gmsm_qnty qty
-                FROM db_sample_data
-                WHERE gmsm_date = (SELECT MAX(gmsm_date) FROM db_sample_data)
-                AND cust_rank <= 20
-            ) x
-            GROUP BY category
-            ORDER BY category
+                    category,
+                    SUM(qty) AS qty
+                FROM
+                (
+                    -- Actual data
+                    SELECT
+                        CASE
+                            WHEN munit IN ('FABRIC','HEADERS','PANT','NEW HANGER','HALF LEG')
+                            THEN munit
+                            ELSE 'OTHERS'
+                        END AS category,
+                        gmsm_qnty AS qty
+                    FROM db_sample_data
+                    WHERE gmsm_date = (SELECT MAX(gmsm_date) FROM db_sample_data)
+                    AND cust_rank <= 20
+
+                    UNION ALL
+
+                    -- Zero rows for missing categories
+                    SELECT 'FABRIC',     0::NUMERIC
+                    UNION ALL SELECT 'HEADERS',    0::NUMERIC
+                    UNION ALL SELECT 'PANT',       0::NUMERIC
+                    UNION ALL SELECT 'NEW HANGER', 0::NUMERIC
+                    UNION ALL SELECT 'HALF LEG',   0::NUMERIC
+                    UNION ALL SELECT 'OTHERS',     0::NUMERIC
+                ) t
+                GROUP BY category
+                ORDER BY category;
         """)
         category_prev = fetchall(cur)
 
@@ -124,19 +140,37 @@ def top20_data():
 
         # -------- CATEGORY WISE : CURRENT MONTH --------
         cur.execute("""
-            SELECT category, SUM(qty) qty FROM (
                 SELECT
-                    CASE
-                        WHEN munit IN ('FABRIC','HEADERS','PANT','NEW HANGER','HALF LEG')
-                        THEN munit ELSE 'OTHERS'
-                    END category,
-                    gmsm_qnty qty
-                FROM db_sample_data
-                WHERE to_char(gmsm_date,'YYYYMM') = to_char(CURRENT_DATE,'YYYYMM')
-                AND cust_rank <= 20
-            ) x
-            GROUP BY category
-            ORDER BY category
+                    category,
+                    SUM(qty) AS qty
+                FROM
+                (
+                    -- Actual data
+                    SELECT
+                        CASE
+                            WHEN munit IN ('FABRIC','HEADERS','PANT','NEW HANGER','HALF LEG')
+                            THEN munit
+                            ELSE 'OTHERS'
+                        END AS category,
+                        gmsm_qnty AS qty
+                    FROM db_sample_data
+                    WHERE gmsm_date >= date_trunc('month', CURRENT_DATE)
+                    AND gmsm_date <  date_trunc('month', CURRENT_DATE) + INTERVAL '1 month'
+                    AND cust_rank <= 20
+
+                    UNION ALL
+
+                    -- Zero rows for missing categories
+                    SELECT 'FABRIC',     0::NUMERIC
+                    UNION ALL SELECT 'HEADERS',    0::NUMERIC
+                    UNION ALL SELECT 'PANT',       0::NUMERIC
+                    UNION ALL SELECT 'NEW HANGER', 0::NUMERIC
+                    UNION ALL SELECT 'HALF LEG',   0::NUMERIC
+                    UNION ALL SELECT 'OTHERS',     0::NUMERIC
+                ) t
+                GROUP BY category
+                ORDER BY category;
+
         """)
         category_month = fetchall(cur)
 

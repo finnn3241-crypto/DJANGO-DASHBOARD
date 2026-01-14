@@ -4,155 +4,248 @@
 
 {% load humanize %}
 <style>
-.SideBySideWrap{
-  display:flex;
-  gap:14px;
-  justify-content:center;
-  font-family:Segoe UI,Roboto,sans-serif;
+/* ===== GLOBAL STYLES ===== */
+* { 
+  box-sizing: border-box; 
 }
 
-.fabricCardPD,
-.fabricCardMN{
-  flex:1;
-  max-width:580px;
-  background:#f1f5f9;
-  border-radius:14px;
-  border:1px solid #e2e8f0;
-  padding:12px;
+body { 
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: #f8fafc;
 }
 
-.fabricHeadChartTextPD{
-  background:linear-gradient(135deg,#8bd0ff,#f9fafb);
-}
-.fabricHeadChartTextMN{
-  background:linear-gradient(135deg,#c7f9cc,#e9ffef);
-}
-
-.fabricHeadChartTextPD,
-.fabricHeadChartTextMN{
-  text-align:center;
-  font-weight:700;
-  padding:6px;
-  border-radius:999px;
-  margin-bottom:8px;
+/* ===== MAIN CONTAINER ===== */
+.dashboardContainer {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px;
 }
 
-.sectionTitlePD{
-  font-size:12px;
-  font-weight:700;
-  margin:6px 0;
+/* ===== PAGE TITLE ===== */
+.pageTitle {
+  text-align: center;
+  font-weight: 700;
+  font-size: 32px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #0f172a;
+  border-bottom: 3px solid #e2e8f0;
+  padding-bottom: 16px;
+  margin-bottom: 32px;
 }
 
-table{
-  width:100%;
-  border-collapse:collapse;
-}
-td{
-  padding:4px;
+/* ===== CARD ROW CONTAINER ===== */
+.cardRowContainer {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
 }
 
-.pdDividerPD{
-  border-top:1px dashed #cbd5f5;
-  margin:6px 0;
+/* ===== INDIVIDUAL CARDS ===== */
+.dashCard {
+  flex: 1;
+  min-width: 300px;
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+  transition: all 0.3s ease;
+}
+
+.dashCard:hover {
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.12);
+  transform: translateY(-2px);
+}
+
+/* ===== CARD HEADERS ===== */
+.cardHeader {
+  text-align: center;
+  font-weight: 700;
+  font-size: 16px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  margin-bottom: 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.cardHeader.prevDay {
+  background: linear-gradient(135deg, #7dd3fc, #e0f2fe);
+  color: #002e49;
+}
+
+.cardHeader.currMonth {
+  background: linear-gradient(135deg, #86efac, #dcfce7);
+  color: #00461c;
+}
+
+/* ===== SECTION DIVIDERS ===== */
+.sectionDivider {
+  border-top: 2px dashed #cbd5e1;
+  margin: 16px 0;
+}
+
+.sectionTitle {
+  font-size: 13px;
+  font-weight: 700;
+  color: #475569;
+  margin: 12px 0 8px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ===== TABLES ===== */
+.dataTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.dataTable td {
+  padding: 8px 4px;
+  font-size: 14px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.dataTable tr:last-child td {
+  border-bottom: none;
+}
+
+.labelCell {
+  text-align: left;
+  color: #334155;
+  font-weight: 500;
+}
+
+.valueCell {
+  text-align: right;
+  color: #111827;
+  font-weight: 600;
+}
+
+.percentCell {
+  color: #dc2626;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 900px) {
+  .cardRowContainer {
+    flex-direction: column;
+  }
+
+  .pageTitle {
+    font-size: 24px;
+  }
+
+  .dashCard {
+    min-width: 100%;
+  }
 }
 </style>
 
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-<div class="max-w-[1400px] mx-auto mt-5 mb-5 px-4 text-center">
-    <h1 class="font-bold text-2xl md:text-3xl uppercase border-b border-gray-300 pb-3 tracking-wider text-slate-800">
-        Sampling
-    </h1>
-</div>
+<div class="dashboardContainer">
 
-<div class="SideBySideWrap">
+  <!-- PAGE TITLE -->
+  <h1 class="pageTitle">Sampling</h1>
 
-<div class="fabricCardPD">
-<div class="fabricHeadChartTextPD">PREVIOUS DAY</div>
+  <!-- ===== SAMPLING OVERVIEW ===== -->
+  <div class="cardRowContainer">
+    
+    <!-- PREVIOUS DAY CARD -->
+    <div class="dashCard">
+      <div class="cardHeader prevDay">Previous Day</div>
 
-<table>
-{% for r in prev_day_reason %}
-<tr>
-<td>{{ r.reason }}</td>
-<td>Qty {{ r.qty|intcomma }}</td>
-<td>Rs. {{ r.amount|intcomma }} @ {{ rate }}</td>
-<td style="color:red">{{ r.per }}%</td>
-</tr>
-{% endfor %}
-</table>
+      <table class="dataTable">
+        {% for r in prev_day_reason %}
+        <tr>
+          <td class="labelCell">{{ r.reason }}</td>
+          <td class="valueCell">Qty {{ r.qty|floatformat:"0"|intcomma }}</td>
+          <td class="valueCell percentCell">{{ r.per }}%</td>
+          <td class="valueCell">Rs. {{ r.amount|floatformat:"0"|intcomma }} @ {{ rate }} P.Kg</td>
+        </tr>
+        {% endfor %}
+      </table>
 
-<div class="pdDividerPD"></div>
+      <div class="sectionDivider"></div>
 
-<div class="sectionTitlePD">MANAGER WISE</div>
-<table>
-{% for m in prev_day_manager %}
-<tr>
-  <td>{{ m.manager_name }}</td>
-  <td>Qty {{ m.qty|intcomma }}</td>
-  <td>Rs. {{ m.amount|intcomma }} @ {{ rate }} P.Kg</td>
-  <td style="color:red">{{ m.per }}%</td>
-</tr>
-{% endfor %}
-</table>
+      <div class="sectionTitle">Manager Wise</div>
+      <table class="dataTable">
+        {% for m in prev_day_manager %}
+        <tr>
+          <td class="labelCell">{{ m.manager_name }}</td>
+          <td class="valueCell">Qty {{ m.qty|floatformat:"0"|intcomma }}</td>
+          <td class="valueCell">Rs. {{ m.amount|floatformat:"0"|intcomma }} @ {{ rate }} P.Kg</td>
+          <td class="valueCell percentCell">{{ m.per }}%</td>
+        </tr>
+        {% endfor %}
+      </table>
 
-<div class="pdDividerPD"></div>
+      <div class="sectionDivider"></div>
 
-<div class="sectionTitlePD">CATEGORY WISE</div>
-<table>
-{% for c in prev_day_category %}
-<tr>
-  <td>{{ c.category }}</td>
-  <td>Qty {{ c.qty|intcomma }}</td>
-  <td>Rs. {{ c.amount|intcomma }} @ {{ rate }} P.Kg</td>
-  <td style="color:red">{{ c.per }}%</td>
-</tr>
-{% endfor %}
-</table>
-</div>
+      <div class="sectionTitle">Category Wise</div>
+      <table class="dataTable">
+        {% for c in prev_day_category %}
+        <tr>
+          <td class="labelCell">{{ c.category }}</td>
+          <td class="valueCell">Qty {{ c.qty|floatformat:"0"|intcomma }}</td>
+          <td class="valueCell">Rs. {{ c.amount|floatformat:"0"|intcomma }} @ {{ rate }} P.Kg</td>
+          <td class="valueCell percentCell">{{ c.per }}%</td>
+        </tr>
+        {% endfor %}
+      </table>
+    </div>
 
-<div class="fabricCardMN">
-<div class="fabricHeadChartTextMN">CURRENT MONTH</div>
+    <!-- CURRENT MONTH CARD -->
+    <div class="dashCard">
+      <div class="cardHeader currMonth">Current Month</div>
 
-<table>
-{% for r in month_reason %}
-<tr>
-<td>{{ r.reason }}</td>
-<td>Qty {{ r.qty|intcomma }}</td>
-<td>Rs. {{ r.amount|intcomma }} @ {{ rate }}</td>
-<td style="color:red">{{ r.per }}%</td>
-</tr>
-{% endfor %}
-</table>
+      <table class="dataTable">
+        {% for r in month_reason %}
+        <tr>
+          <td class="labelCell">{{ r.reason }}</td>
+          <td class="valueCell">Qty {{ r.qty|floatformat:"0"|intcomma }}</td>
+          <td class="valueCell percentCell">{{ r.per }}%</td>
+          <td class="valueCell">Rs. {{ r.amount|floatformat:"0"|intcomma }} @ {{ rate }} P.Kg</td>
+        </tr>
+        {% endfor %}
+      </table>
 
-<div class="pdDividerPD"></div>
+      <div class="sectionDivider"></div>
 
-<div class="sectionTitlePD">MANAGER WISE</div>
-<table>
-{% for m in month_manager %}
-<tr>
-  <td>{{ m.manager_name }}</td>
-  <td>Qty {{ m.qty|intcomma }}</td>
-  <td>Rs. {{ m.amount|intcomma }} @ {{ rate }} P.Kg</td>
-  <td style="color:red">{{ m.per }}%</td>
-</tr>
-{% endfor %}
-</table>
+      <div class="sectionTitle">Manager Wise</div>
+      <table class="dataTable">
+        {% for m in month_manager %}
+        <tr>
+          <td class="labelCell">{{ m.manager_name }}</td>
+          <td class="valueCell">Qty {{ m.qty|floatformat:"0"|intcomma }}</td>
+          <td class="valueCell">Rs. {{ m.amount|floatformat:"0"|intcomma }} @ {{ rate }} P.Kg</td>
+          <td class="valueCell percentCell">{{ m.per }}%</td>
+        </tr>
+        {% endfor %}
+      </table>
 
-<div class="pdDividerPD"></div>
+      <div class="sectionDivider"></div>
 
-<div class="sectionTitlePD">CATEGORY WISE</div>
-<table>
-{% for c in month_category %}
-<tr>
-  <td>{{ c.category }}</td>
-  <td>Qty {{ c.qty|intcomma }}</td>
-  <td>Rs. {{ c.amount|intcomma }} @ {{ rate }} P.Kg</td>
-  <td style="color:red">{{ c.per }}%</td>
-</tr>
-{% endfor %}
-</table>
-</div>
+      <div class="sectionTitle">Category Wise</div>
+      <table class="dataTable">
+        {% for c in month_category %}
+        <tr>
+          <td class="labelCell">{{ c.category }}</td>
+          <td class="valueCell">Qty {{ c.qty|floatformat:"0"|intcomma }}</td>
+          <td class="valueCell">Rs. {{ c.amount|floatformat:"0"|intcomma }} @ {{ rate }} P.Kg</td>
+          <td class="valueCell percentCell">{{ c.per }}%</td>
+        </tr>
+        {% endfor %}
+      </table>
+    </div>
+
+  </div>
 
 </div>
 
@@ -161,3 +254,4 @@ td{
 {% include "dashboard/sample/top20.html" %}
 
 {% endblock %}
+

@@ -1,25 +1,8 @@
-{% extends "dashboard/base.html" %}
-{% block content %}
-
 {% load humanize %}
 
 <style>
-
-body { 
-    margin:0; 
-    padding:0; 
-    background:#f5f6f8; 
-    font-family: 'IBM Plex Sans', system-ui, sans-serif;  
-}
-
-.cards{
-    display:grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px,1fr));
-    gap:24px;
-    padding:20px;
-    max-width:1400px;
-    margin:0 auto;
-}
+body{background:#f4f6f9}
+.cards{display:flex;gap:26px;justify-content:center;flex-wrap:wrap}
 
 .export-card-wrapper{
     background:#eceef1;
@@ -34,14 +17,10 @@ body {
 
 
 .export-title{
-    background:#8fbc8f;
-    color:#000000;
-    text-align:center;
-    padding:12px;
-    font-weight:700;
-    font-size:25px;
-    letter-spacing:.8px;
-    text-transform:uppercase;
+    background:linear-gradient(135deg,#444,#222);
+    color:#fff;font-weight:700;font-size:19px;
+    text-align:center;padding:12px 0;
+    border-radius:12px 12px 0 0;
 }
 .cardInv{
     background:#e5e7eb;border-radius:16px;
@@ -67,7 +46,7 @@ body {
 
 .mgr-row{margin:10px 16px}
 .mgr-name{display:flex;justify-content:space-between;font-weight:600}
-.bar-outer{background:#e5e7eb;border-radius:20px;height:14px;margin-top:4px}
+.bar-outer{background:#777;border-radius:20px;height:14px;margin-top:4px}
 .bar-inner{height:14px;border-radius:20px;font-size:12px;font-weight:700;text-align:center}
 
 .cardHeader{
@@ -111,8 +90,7 @@ body {
 <div class="export-title">EXPORT</div>
 <div className="chart-section">
 <div class="chart-container">
-<b>Order In Hand</b>
-<canvas id="chartExport" width="90" height="90"></canvas>
+<canvas id="chartExport" width="90" height="90" ></canvas>
 <div class="stat-line">{{ export.percentage }}% of Overall Order In Hand</div>
 <div class="stat-line-second">({{ export.curr_dispatch }} mtr / {{ export.total_plan }} mtr)</div>
 </div>
@@ -122,7 +100,7 @@ body {
 <div class="mgr-row">
 <div class="mgr-name">Matched Fabric Inventory <span>{{ export.inventory }}</span></div>
 <div class="bar-outer">
-<div class="bar-inner" style="width:{{ export.inv_per }}%;background:#e67e22">{{ export.inv_per }}%</div>
+<div class="bar-inner" style="width:{{ export.inv_per }}%;background:#ddd60a">{{ export.inv_per }}%</div>
 </div>
 </div>
 
@@ -141,7 +119,7 @@ body {
 <div class="mgr-row">
 <div class="mgr-name">{{ m.manager_name }} <span>{{ m.dispatch_exp }}</span></div>
 <div class="bar-outer">
-<div class="bar-inner" style="width:{{ m.per }}%;background:#e67e22">{{ m.per }}%</div>
+<div class="bar-inner" style="width:{{ m.per }}%;background:#ddd60a">{{ m.per }}%</div>
 </div>
 </div>
 {% endfor %}
@@ -158,7 +136,6 @@ body {
 <div class="cardInv">
 
 <div class="chart-container">
-<b>Order In Hand</b>
 <canvas id="chartLocal" width="90" height="90"></canvas>
 <div class="stat-line">{{ local.percentage }}% of Overall Order In Hand</div>
 <div class="stat-line-second">({{ local.curr_dispatch }} mtr / {{ local.total_plan }} mtr)</div>
@@ -168,7 +145,7 @@ body {
 <div class="mgr-row">
 <div class="mgr-name">Matched Fabric Inventory <span>{{ local.inventory }}</span></div>
 <div class="bar-outer">
-<div class="bar-inner" style="width:{{ local.inv_per }}%;background:#e67e22">{{ local.inv_per }}%</div>
+<div class="bar-inner" style="width:{{ local.inv_per }}%;background:#ddd60a">{{ local.inv_per }}%</div>
 </div>
 </div>
 
@@ -187,7 +164,7 @@ body {
 <div class="mgr-row">
 <div class="mgr-name">{{ m.manager_name }} <span>{{ m.dispatch_exp }}</span></div>
 <div class="bar-outer">
-<div class="bar-inner" style="width:{{ m.per }}%;background:#e67e22">{{ m.per }}%</div>
+<div class="bar-inner" style="width:{{ m.per }}%;background:#ddd60a">{{ m.per }}%</div>
 </div>
 </div>
 {% endfor %}
@@ -202,7 +179,6 @@ body {
 <div class="cardInv">
 
 <div class="chart-container">
-<b>Order In Hand</b>
 <canvas id="chartTotal" width="90" height="90"></canvas>
 <div class="stat-line">{{ total.percentage }}% of Overall Order In Hand</div>
 <div class="stat-line-second">Total Export/Local Order In Hand: {{ total.total_plan }} mtr</div>
@@ -213,7 +189,7 @@ body {
 <div class="mgr-row">
 <div class="mgr-name">Matched Fabric Inventory <span>{{ total.inventory }}</span></div>
 <div class="bar-outer">
-<div class="bar-inner" style="width:{{ total.inv_per }}%;background:#e67e22">{{ total.inv_per }}%</div>
+<div class="bar-inner" style="width:{{ total.inv_per }}%;background:#ddd60a">{{ total.inv_per }}%</div>
 </div>
 </div>
 
@@ -232,7 +208,7 @@ body {
 <div class="mgr-row">
 <div class="mgr-name">{{ m.manager_name }} <span>{{ m.dispatch_exp }}</span></div>
 <div class="bar-outer">
-<div class="bar-inner" style="width:{{ m.per }}%;background:#e67e22">{{ m.per }}%</div>
+<div class="bar-inner" style="width:{{ m.per }}%;background:#ddd60a">{{ m.per }}%</div>
 </div>
 </div>
 {% endfor %}

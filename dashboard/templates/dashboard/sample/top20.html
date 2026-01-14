@@ -1,127 +1,135 @@
 {% load humanize %}
 
-<div class="unitHeaderBar" style="background:gold;">TOP 20 CUSTOMERS</div>
+<style>
+/* ===== TOP 20 CUSTOMERS SECTION STYLES ===== */
 
-<div class="SideBySideWrap">
+/* Gold Header Bar */
+.sectionHeaderBar.gold {
+  margin: 40px 0 20px 0;
+  padding: 12px 32px;
+  background: linear-gradient(90deg, #fef3c7, #fde68a);
+  text-align: center;
+  font-weight: 700;
+  font-size: 18px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #0f172a;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(15, 23, 42, 0.05);
+}
+</style>
 
-<!-- PREVIOUS DAY -->
-<div class="fabricCardPD">
-<div class="fabricHeadChartTextPD">PREVIOUS DAY</div>
+<!-- TOP 20 CUSTOMERS SECTION -->
+<div class="sectionHeaderBar gold">Top 20 Customers</div>
 
-<table>
-{% for r in top20.prev_reason %}
-<tr>
-  <td class="fabricLabelCellCM">{{ r.reason }}</td>
-  <td class="fabricValueCellCM">Qty {{ r.qty|intcomma }} <span style="color:red;font-size:10px">{{ r.per }}%</span></td>
-  <td class="fabricValueCellCM">Rs. {{ r.amount|intcomma }} @ {{ top20.rate }} P.Kg</td>
-</tr>
-{% endfor %}
-</table>
+<div class="cardRowContainer">
 
-<div class="pdDividerPD"></div>
+  <!-- PREVIOUS DAY CARD -->
+  <div class="dashCard">
+    <div class="cardHeader prevDay">Previous Day</div>
 
-<div class="sectionTitlePD">CUSTOMER WISE</div>
-<table>
-{% for c in top20.prev_customer %}
-<tr>
-  <td class="fabricLabelCellCM">{{ c.customer }}</td>
-  <td class="fabricValueCellCM">Qty {{ c.qty|intcomma }}</td>
-  <td class="fabricValueCellCM">Rs. {{ c.amount|intcomma }} <span style="color:red;font-size:10px">{{ c.per }}%</span></td>
-</tr>
-{% endfor %}
-</table>
+    <!-- Reason Wise -->
+    <table class="dataTable">
+      {% for r in top20.prev_reason %}
+      <tr>
+        <td class="labelCell">{{ r.reason }}</td>
+        <td class="valueCell">Qty {{ r.qty|floatformat:"0"|intcomma }}</td>
+        <td class="valueCell">Rs. {{ r.amount|floatformat:"0"|intcomma }} @ {{ rate }} P.Kg</td>
+        <td class="valueCell percentCell">{{ r.per }}%</td>
+      </tr>
+      {% endfor %}
+    </table>
 
-<div class="pdDividerPD"></div>
+    <div class="sectionDivider"></div>
 
-<div class="sectionTitlePD">CATEGORY WISE</div>
-<table>
-{% for c in top20.category_prev %}
-<tr>
-  <td class="fabricLabelCellCM">{{ c.category }}</td>
-  <td class="fabricValueCellCM">Qty {{ c.qty|intcomma }}</td>
-  <td class="fabricValueCellCM">
-    Rs. {{ c.amount|intcomma }} @ {{ top20.rate }} P.Kg
-    <span style="color:red;font-size:10px">{{ c.per }}%</span>
-  </td>
-</tr>
-{% endfor %}
-</table>
+    <!-- Customer Wise -->
+    <div class="sectionTitle">Customer Wise</div>
+    <table class="dataTable">
+      {% for c in top20.prev_customer %}
+      <tr>
+        <td class="labelCell">{{ c.customer }}</td>
+        <td class="valueCell">Qty {{ c.qty|floatformat:"0"|intcomma }}</td>
+        <td class="valueCell">Rs. {{ c.amount|floatformat:"0"|intcomma }} @ {{ rate }} P.Kg</td>
+        <td class="valueCell percentCell">{{ c.per }}%</td>
+      </tr>
+      {% endfor %}
+    </table>
 
-</div>
+    <div class="sectionDivider"></div>
 
-<!-- CURRENT MONTH -->
-<div class="fabricCardMN">
-<div class="fabricHeadChartTextMN">CURRENT MONTH</div>
+    <!-- Category Wise -->
+    <div class="sectionTitle">Category Wise</div>
+    <table class="dataTable">
+      {% for c in top20.category_prev %}
+      <tr>
+        <td class="labelCell">{{ c.category }}</td>
+        <td class="valueCell">Qty {{ c.qty|floatformat:"0"|intcomma }}</td>
+        <td class="valueCell">Rs. {{ c.amount|floatformat:"0"|intcomma }} @ {{ rate }} P.Kg</td>
+        <td class="valueCell percentCell">{{ c.per }}%</td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
 
-<table>
-{% for r in top20.curr_reason %}
-<tr>
-  <td class="fabricLabelCellCM">{{ r.reason }}</td>
-  <td class="fabricValueCellCM">Qty {{ r.qty|intcomma }} <span style="color:red;font-size:10px">{{ r.per }}%</span></td>
-  <td class="fabricValueCellCM">Rs. {{ r.amount|intcomma }} @ {{ top20.rate }} P.Kg</td>
-</tr>
-{% endfor %}
-</table>
+  <!-- CURRENT MONTH CARD -->
+  <div class="dashCard">
+    <div class="cardHeader currMonth">Current Month</div>
 
-<div class="pdDividerPD"></div>
+    <!-- Reason Wise -->
+    <table class="dataTable">
+      {% for r in top20.curr_reason %}
+      <tr>
+        <td class="labelCell">{{ r.reason }}</td>
+        <td class="valueCell">Qty {{ r.qty|floatformat:"0"|intcomma }}</td>
+        <td class="valueCell">Rs. {{ r.amount|floatformat:"0"|intcomma }} @ {{ rate }} P.Kg</td>
+        <td class="valueCell percentCell">{{ r.per }}%</td>
+      </tr>
+      {% endfor %}
+    </table>
 
-<div class="sectionTitlePD">CUSTOMER WISE</div>
-<table>
-{% for c in top20.curr_customer %}
-<tr>
-  <td class="fabricLabelCellCM">{{ c.customer }}</td>
-  <td class="fabricValueCellCM">Qty {{ c.qty|intcomma }}</td>
-  <td class="fabricValueCellCM">Rs. {{ c.amount|intcomma }} <span style="color:red;font-size:10px">{{ c.per }}%</span></td>
-</tr>
-{% endfor %}
-</table>
+    <div class="sectionDivider"></div>
 
-<div class="pdDividerPD"></div>
+    <!-- Customer Wise -->
+    <div class="sectionTitle">Customer Wise</div>
+    <table class="dataTable">
+      {% for c in top20.curr_customer %}
+      <tr>
+        <td class="labelCell">{{ c.customer }}</td>
+        <td class="valueCell">Qty {{ c.qty|floatformat:"0"|intcomma }}</td>
+        <td class="valueCell">Rs. {{ c.amount|floatformat:"0"|intcomma }} @ {{ rate }} P.Kg</td>
+        <td class="valueCell percentCell">{{ c.per }}%</td>
+      </tr>
+      {% endfor %}
+    </table>
 
-<div class="sectionTitlePD">ARTICLE / COLOR DISPATCHED TO SAME CUSTOMER</div>
-<table>
-{% for a in top20.article_color %}
-<tr>
-  <td class="fabricLabelCellCM">{{ a.customer }}</td>
-  <td class="fabricLabelCellCM">{{ a.style_color }}</td>
-  <td class="fabricValueCellCM">Count {{ a.cnt }}</td>
-</tr>
-{% endfor %}
-</table>
+    <div class="sectionDivider"></div>
 
-<div class="pdDividerPD"></div>
+    <!-- Article / Color Dispatched -->
+    <div class="sectionTitle">Article / Color Dispatched to Same Customer</div>
+    <table class="dataTable">
+      {% for a in top20.article_color %}
+      <tr>
+        <td class="labelCell">{{ a.customer }}</td>
+        <td class="labelCell">{{ a.style_color }}</td>
+        <td class="valueCell">Count {{ a.cnt }}</td>
+      </tr>
+      {% endfor %}
+    </table>
 
-<div class="sectionTitlePD">CATEGORY WISE</div>
-<table>
-{% for c in top20.category_month %}
-<tr>
-  <td class="fabricLabelCellCM">{{ c.category }}</td>
-  <td class="fabricValueCellCM">Qty {{ c.qty|intcomma }}</td>
-  <td class="fabricValueCellCM">
-    Rs. {{ c.amount|intcomma }} @ {{ top20.rate }} P.Kg
-    <span style="color:red;font-size:10px">{{ c.per }}%</span>
-  </td>
-</tr>
-{% endfor %}
-</table>
+    <div class="sectionDivider"></div>
 
-<div class="pdDividerPD"></div>
-
-<div class="sectionTitlePD">CATEGORY WISE</div>
-<table>
-{% for c in top20.category_prev %}
-<tr>
-  <td class="fabricLabelCellCM">{{ c.category }}</td>
-  <td class="fabricValueCellCM">Qty {{ c.qty|intcomma }}</td>
-  <td class="fabricValueCellCM">
-    Rs. {{ c.amount|intcomma }} @ {{ top20.rate }} P.Kg
-    <span style="color:red;font-size:10px">{{ c.per }}%</span>
-  </td>
-</tr>
-{% endfor %}
-</table>
-
-
-</div>
+    <!-- Category Wise -->
+    <div class="sectionTitle">Category Wise</div>
+    <table class="dataTable">
+      {% for c in top20.category_month %}
+      <tr>
+        <td class="labelCell">{{ c.category }}</td>
+        <td class="valueCell">Qty {{ c.qty|floatformat:"0"|intcomma }}</td>
+        <td class="valueCell">Rs. {{ c.amount|floatformat:"0"|intcomma }} @ {{ rate }} P.Kg</td>
+        <td class="valueCell percentCell">{{ c.per }}%</td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
 
 </div>

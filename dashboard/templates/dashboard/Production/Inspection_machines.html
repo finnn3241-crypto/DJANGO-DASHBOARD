@@ -1,0 +1,344 @@
+{% extends "dashboard/sidebar.html" %}
+
+{% block content %}
+
+{% load humanize %}
+
+<style>
+body{
+    font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+}
+
+/* ===== Page Frame ===== */
+.pageWrap{
+    width:100%;
+    margin:auto;
+}
+
+/* ===== Card Grid ===== */
+.cardContainer{
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap:24px;
+    padding:24px 10px 40px;
+}
+
+/* ===== Card ===== */
+.cardInv{
+    background:#eceef1;
+    border-radius:12px;
+    box-shadow:0 5px 12px rgba(0,0,0,.15);
+    display:flex;
+    flex-direction:column;
+    min-height:100%;
+}
+
+/* ===== Machine Heading Button Style ===== */
+.machineTitle{
+    background:#8adff3;
+    color:#000;
+    font-size:17px;
+    font-weight:800;
+    text-align:center;
+    padding:10px 0;
+    border-radius:10px 10px 0 0;
+    letter-spacing:.6px;
+}
+
+
+/* ===== Sections ===== */
+.sectionPad{padding:10px 16px 14px}
+
+.cardHeader{
+    display:inline-block;
+    background:#7fd1f4;
+    color:#000;
+    font-weight:800;
+    font-size:13px;
+    padding:6px 16px;
+    border-radius:18px;
+    text-align:center;
+    margin:12px auto 6px;
+}
+
+.headerWrap{
+    text-align:center;
+}
+
+/* ===== Info Table ===== */
+.infoTable{
+    width:100%;
+    font-size:14px;
+}
+.infoTable td{
+    padding:3px 0;
+}
+
+/* ===== Bars ===== */
+.mgr-row{margin-top:8px; padding:0 16px 8px;}
+
+.mgr-name{
+    display:flex;
+    justify-content:space-between;
+    font-weight:600;
+    margin-bottom:3px;
+}
+
+.bar-outer{
+    background:#e1e4e8;
+    border-radius:20px;
+    overflow:hidden;
+    height:14px;
+    position:relative;        
+}
+
+.bar-inner{
+    height:100%;
+    border-radius:20px;
+    background:#ddd60a;
+}
+
+/* centered label */
+.bar-label{
+    position:absolute;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size: 14px;
+    font-weight:600;
+    color:#000;
+    pointer-events:none;
+}
+
+/* ===== Section Card Look ===== */
+.sectionCard{
+    background:#ffffff;
+    border-radius:16px;
+    padding:14px 14px 16px;
+    margin:10px 12px 16px;
+    box-shadow:0 4px 10px rgba(0,0,0,.08);
+}
+
+/* ===== Floating Pill Header ===== */
+.sectionPill{
+    display:inline-block;
+    background:#7fd1f4;
+    color:#000;
+    font-weight:800;
+    font-size:13px;
+    padding:6px 18px;
+    border-radius:18px;
+    letter-spacing:.6px;
+    margin:-26px auto 12px;
+}
+
+/* ===== Row Layout ===== */
+.dataRow{
+    margin-bottom:12px;
+}
+
+.dataTop{
+    display:flex;
+    justify-content:space-between;
+    font-weight:600;
+    font-size:15px;
+}
+
+/* ===== Soft Bars ===== */
+.softBar{
+    background:#e1e4e8;
+    border-radius:10px;
+    height:10px;
+    margin:6px 0 4px;
+    overflow:hidden;
+    position:relative;  
+    height:14px;
+}
+
+.softFill{
+    height:100%;
+    border-radius:10px;
+    background:#f4a261;
+}
+
+/* centered percentage label */
+.softLabel{
+    position:absolute;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size: 14px;
+    font-weight:600;
+    color:#000;
+    pointer-events:none;
+    white-space:nowrap;
+}
+
+
+.softMeta{
+    display:flex;
+    justify-content:space-between;
+    font-size:13px;
+    color:#666;
+}
+.chartWrap{
+    max-width:1400px;
+    height:520px !important  ;  
+    margin:20px auto 40px;
+}
+
+
+
+
+</style>
+
+<div class="chartWrap">
+    <canvas id="machineChart"></canvas>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+
+<script>
+const labels = {{ chart_labels|safe }};
+const dataValues = {{ chart_values|safe }};
+
+const ctx = document.getElementById('machineChart');
+
+new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: labels,
+        datasets: [{
+            label: 'Machine',
+            data: dataValues,
+            backgroundColor: '#3aa0db',
+            borderRadius: 6,
+            barThickness: 45
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        layout: { padding: { top: 30 } },
+        plugins: {
+            legend: { display: false },
+            title: {
+                display: true,
+                text: 'MONTHLY MACHINE PRODUCTION IN METER',
+                font: { size: 20, weight: 'bold' },
+                color: '#000'
+            },
+            datalabels: {
+                anchor: 'end',
+                align: 'top',
+                formatter: value => value.toLocaleString(),
+                color: '#000',
+                font: { weight: 'bold', size: 16 }
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    callback: value => value.toLocaleString()
+                }
+            }
+        }
+    },
+    plugins: [ChartDataLabels]
+});
+
+</script>
+
+<div class="pageWrap">
+
+<div class="cardContainer">
+
+{% for m in machines %}
+
+<div class="cardInv">
+
+<div class="machineTitle">
+    MACHINE {{ m.machine_no }}
+</div>
+
+<div class="mgr-row">
+  <div class="mgr-name">Machine Efficiency In %</div>
+    <div class="bar-outer">
+        <div class="bar-inner" style="width:{{ m.percent }}%;background:#ddd60a"></div>
+        <div class="bar-label">{{ m.percent }}%</div>
+    </div>
+</div>
+
+<div class="sectionPad">
+<table width="100%">
+<tr><td>Previous Day Meter</td><td align="right">{{ m.prev_mtr|intcomma }}</td></tr>
+<tr><td>Current Month Meter</td><td align="right">{{ m.mtr|intcomma }}</td></tr>
+<tr><td>No Of Inspector</td><td align="right">{{ m.inspector_count }}</td></tr>
+<tr><td>No Of Lot Run</td><td align="right">{{ m.lot_count }}</td></tr>
+<tr><td>Total Month Meter</td><td align="right">{{ curr_month_dispatch|intcomma }}</td></tr>
+</table>
+</div>
+
+<div class="sectionCard">
+    <div style="text-align:center">
+        <div class="sectionPill">GRADE WISE</div>
+    </div>
+
+    {% for g in m.grade %}
+    <div class="dataRow">
+        <div class="dataTop">
+            <span>{{ g.grade }}</span>
+            <span>{{ g.mtr|intcomma }}</span>
+        </div>
+
+        <div class="softBar">
+            <div class="softFill" style="width:{{ g.percent }}%"></div>
+            <div class="softLabel">{{ g.percent }}%</div>
+        </div>
+
+
+        <div class="softMeta">
+            <span>&nbsp;</span>
+            <span>Plan: {{ m.mtr|intcomma }}</span>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+
+<div class="sectionCard">
+    <div style="text-align:center">
+        <div class="sectionPill">SHIFT WISE</div>
+    </div>
+
+    {% for s in m.shift %}
+    <div class="dataRow">
+        <div class="dataTop">
+            <span>{{ s.shift }}</span>
+            <span>{{ s.mtr|intcomma }}</span>
+        </div>
+
+        <div class="softBar">
+            <div class="softFill" style="width:{{ s.percent }}%"></div>
+            <div class="softLabel">{{ s.percent }}%</div>
+        </div>
+
+        <div class="softMeta">
+            <span>&nbsp;</span>
+            <span>Plan: {{ m.mtr|intcomma }}</span>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+</div>  
+
+{% endfor %}
+
+</div>
+</div>
+
+{% endblock %}

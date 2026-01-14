@@ -29,7 +29,7 @@ def order_in_hand_local():
         """)
         btd, days, fin = cur.fetchone() or (0, 0, 0)
 
-        # ---------- INVENTORY (MATCHES APEX) ----------
+        # ---------- INVENTORY ----------
         cur.execute("""
         WITH base AS (
             SELECT  
@@ -102,17 +102,30 @@ def order_in_hand_local():
     # ---------- MANAGER WISE (MATCHES APEX) ----------
     with connection.cursor() as cur:
         cur.execute("""
-        SELECT manager_name, SUM(dispatch_exp) dispatch_exp FROM (
-          SELECT COALESCE(manager_name,'BLANK') manager_name,
-                 COALESCE(SUM(ord_meter_mtr),0)-COALESCE(SUM(ship_qty_mtr),0) dispatch_exp
-          FROM rpt_fabord_status_el
-          WHERE exp_loc='LOCAL'
-          GROUP BY COALESCE(manager_name,'BLANK')
-          UNION ALL
-          SELECT DISTINCT COALESCE(manager_name,'BLANK'),0 FROM rpt_fabord_status_el
-        )
-        GROUP BY manager_name
-        ORDER BY manager_name
+            SELECT
+                manager_name,
+                SUM(dispatch_exp) AS dispatch_exp
+            FROM
+            (
+                -- Actual data
+                SELECT
+                    manager_name,
+                    COALESCE(SUM(ord_meter_mtr), 0) - COALESCE(SUM(ship_qty_mtr), 0) AS dispatch_exp
+                FROM rpt_fabord_status_el
+                WHERE exp_loc = 'LOCAL'
+                GROUP BY manager_name
+
+                UNION ALL
+
+                -- Zero rows to force all managers to appear
+                SELECT DISTINCT
+                    manager_name,
+                    0::NUMERIC AS dispatch_exp
+                FROM rpt_fabord_status_el
+            ) t
+            GROUP BY manager_name
+            ORDER BY manager_name;
+
         """)
         managers=[]
         for name,val in cur.fetchall():
