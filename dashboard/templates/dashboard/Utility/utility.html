@@ -1,0 +1,47 @@
+{% extends 'dashboard/sidebar.html' %}
+
+{% block content %}
+<style>
+    .error-box {
+    text-align: center;
+    margin-top: 120px;
+}
+
+.error-box h1 {
+    font-size: 100px;
+    color: #1f2d3d;
+    margin-bottom: 10px;
+}
+
+.error-box h3 {
+    font-size: 26px;
+    margin-bottom: 10px;
+}
+
+.error-box p {
+    color: #666;
+    margin-bottom: 25px;
+}
+
+.error-box .btn {
+    display: inline-block;
+    padding: 10px 22px;
+    background: #1f2d3d;
+    color: #fff;
+    border-radius: 6px;
+    text-decoration: none;
+}
+
+.error-box .btn:hover {
+    background: #16202b;
+}
+
+</style>
+<div class="error-box">
+    <h1>404</h1>
+    <h3>Page Not Available</h3>
+    <p>This utility page is currently under development or does not exist.</p>
+    <a href="{% url 'index' %}" class="btn">Back to Dashboard</a>
+</div>
+
+{% endblock %}

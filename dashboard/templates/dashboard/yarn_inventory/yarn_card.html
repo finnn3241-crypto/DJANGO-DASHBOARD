@@ -23,21 +23,25 @@ body { margin:0; padding:0; background:#f5f6f8; font-family: 'IBM Plex Sans', sy
 }
 
 .freshHeader{
-    background:#8fbc8f;
-    color:#000;
-    text-align:center;
-    padding:12px;
-    font-weight:700;
-    font-size:18px;
-    letter-spacing:.8px;
-    text-transform:uppercase;
+    background: #8fbc8f;
+    color: #000;
+    text-align: center;
+    padding: 12px;
+    font-weight: 700;
+    font-size: 25px;
+    letter-spacing: .8px;
+    text-transform: uppercase;
 }
 
 .freshBody{ padding:16px; }
 
 .freshChartContainer{ text-align:center; margin-bottom:12px; }
 .freshChartText{ font-weight:700; font-size:14px; margin-top:8px; }
-.freshChartSubText{ font-size:13px; color:#2d2d2d; }
+.freshChartSubText{    
+     font-size: 15px;
+    color: #0d0d0d;
+    line-height: 2.2; 
+}
 
 .sectionBox{
     background:#fff;
@@ -118,7 +122,7 @@ canvas{ width:96px !important; height:96px !important; margin:auto; }
         <p style="font-weight:700; font-size:16px; margin-top:8px;">
             {{ aging.overall_pct }}% of Overall Inventory
         </p>
-        <p style="font-size:14px; color:#2d2d2d;">
+        <p class="freshChartSubText">
             (Inv: {{ aging.age_lbs|intcomma }} / LBS: {{ aging.total_lbs|intcomma }})
         </p>
     </div>
@@ -185,7 +189,7 @@ canvas{ width:96px !important; height:96px !important; margin:auto; }
         <p style="font-weight:700; font-size:16px; margin-top:8px;">
             {{ aging_6_12.overall_pct }}% of Overall Inventory
         </p>
-        <p style="font-size:14px; color:#2d2d2d;">
+        <p class="freshChartSubText">
             (Inv: {{ aging_6_12.age_lbs|intcomma }} / LBS: {{ aging_6_12.total_lbs|intcomma }})
         </p>
     </div>
@@ -254,7 +258,7 @@ canvas{ width:96px !important; height:96px !important; margin:auto; }
         <p style="font-weight:700; font-size:16px; margin-top:8px;">
             {{ aging_1_2.overall_pct }}% of Overall Inventory
         </p>
-        <p style="font-size:14px; color:#2d2d2d;">
+        <p class="freshChartSubText">
             (Inv: {{ aging_1_2.age_lbs|intcomma }} / LBS: {{ aging_1_2.total_lbs|intcomma }})
         </p>
     </div>
@@ -323,7 +327,7 @@ canvas{ width:96px !important; height:96px !important; margin:auto; }
         <p style="font-weight:700; font-size:16px; margin-top:8px;">
             {{ aging_2.overall_pct }}% of Overall Inventory
         </p>
-        <p style="font-size:14px; color:#2d2d2d;">
+        <p class="freshChartSubText">
             (Inv: {{ aging_2.age_lbs|intcomma }} / LBS: {{ aging_2.total_lbs|intcomma }})
         </p>
     </div>
@@ -382,38 +386,62 @@ canvas{ width:96px !important; height:96px !important; margin:auto; }
 <script>
 document.addEventListener("DOMContentLoaded", function () {
 
-    function buildChart(canvasId, age, total) {
+    function buildChart(canvasId, age, total, color = "#4caf50") {
         const canvas = document.getElementById(canvasId);
         if (!canvas) return;
 
         const ctx = canvas.getContext("2d");
 
+        // Convert template variables to numbers
         age = Number(age) || 0;
         total = Number(total) || 0;
 
-        const remaining = Math.max(total - age, 0);
+        let i = 0;
 
-        new Chart(ctx, {
+        // Initialize chart with starting values [0, total]
+        const chart = new Chart(ctx, {
             type: "doughnut",
             data: {
                 datasets: [{
-                    data: [age, remaining],
-                    backgroundColor: ["#28a745", "#e0e0e0"],
+                    data: [0, total],
+                    backgroundColor: [color, "#e0e0e0"],
                     borderWidth: 0
                 }]
             },
             options: {
                 cutout: "75%",
                 responsive: true,
+                animation: false, // Disable default animation to use our custom timer
                 plugins: { legend: { display: false } }
             }
         });
+
+        // Animation logic
+        let timer = setInterval(() => {
+            if (i >= age) {
+                // Snap to final exact values
+                chart.data.datasets[0].data = [age, Math.max(total - age, 0)];
+                chart.update();
+                clearInterval(timer);
+                return;
+            }
+
+            // Calculate the increment step
+            i += Math.ceil(age / 50);
+            
+            // Animate both segments: Green grows (i), Gray shrinks (total - i)
+            let currentRemaining = Math.max(total - i, 0);
+
+            chart.data.datasets[0].data = [i, currentRemaining];
+            chart.update();
+        }, 20); // 20ms update interval
     }
 
-    buildChart("ProgressChart1", {{ aging.age_lbs }}, {{ aging.total_lbs }});
-    buildChart("ProgressChart2", {{ aging_6_12.age_lbs }}, {{ aging_6_12.total_lbs }});
-    buildChart("ProgressChart3", {{ aging_1_2.age_lbs }}, {{ aging_1_2.total_lbs }});
-    buildChart("ProgressChart4", {{ aging_2.age_lbs }}, {{ aging_2.total_lbs }});
+    // Call the function for each Aging chart
+    buildChart("ProgressChart1", {{ aging.age_lbs|default:0 }}, {{ aging.total_lbs|default:0 }}, '#00A300');
+    buildChart("ProgressChart2", {{ aging_6_12.age_lbs|default:0 }}, {{ aging_6_12.total_lbs|default:0 }}, '#0077ff');
+    buildChart("ProgressChart3", {{ aging_1_2.age_lbs|default:0 }}, {{ aging_1_2.total_lbs|default:0 }}, '#ff0000');
+    buildChart("ProgressChart4", {{ aging_2.age_lbs|default:0 }}, {{ aging_2.total_lbs|default:0 }}, '#ea00ff');
 });
 </script>
 

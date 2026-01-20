@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
 
 from .services.dispatch.dispatch_service import get_dispatch_data
 from .services.dispatch.Local_dispatch import get_dispatch_data_L
@@ -40,7 +41,6 @@ from dashboard.services.Production.production import ( warping_dashboard,
     sanfor_dashboard,
     inspection_dashboard
 )
-
 from dashboard.services.Yarn_Inventory.yarn_inventory import ( 
     get_yarn_inventory_kpis,
     get_fresh_inventory_data,
@@ -52,10 +52,12 @@ from datetime import date
 
 from dashboard.services.Production.inspect_machine import machine_dashboard_data
 
+@login_required
 def index(request):
     data = {}
     return render(request, "dashboard/index.html", data)
 
+@login_required
 def home(request):
     data = {}
 
@@ -70,8 +72,7 @@ def home(request):
 
     return render(request, "dashboard/dispatch/home.html", data)
 
-
-
+@login_required
 def fabric(request):
     data = {}
 
@@ -105,13 +106,14 @@ def fabric(request):
 
     return render(request, "dashboard/fabric_inventory/fabric_kpis.html", data)
 
+@login_required
 def sample(request):
     context = sample_first()
     context["units"] = unit_dashboard_data()
     context["top20"] = top20_data()
     return render(request, "dashboard/sample/samplefirst.html", context)
 
-
+@login_required
 def oih(request):
     context = {
         "export": order_in_hand_exp(),
@@ -120,7 +122,7 @@ def oih(request):
     }
     return render(request, "dashboard/OIH/order_in_hand.html", context)
 
-
+@login_required
 def prod(request):
     context = {
         "warp": warping_dashboard(),
@@ -135,7 +137,7 @@ def prod(request):
     }
     return render(request, "dashboard/Production/Production.html", context)
 
-
+@login_required
 def yarn(request):
     context = {
         "kpis": get_yarn_inventory_kpis(),
@@ -146,8 +148,12 @@ def yarn(request):
     }
     return render(request, "dashboard/yarn_inventory/yarn_kpis.html", context)
 
+@login_required
 def machine(request):
     context = machine_dashboard_data(date.today())
     return render(request, "dashboard/Production/Inspection_machines.html", context)
 
-
+@login_required
+def utility(request):
+    data = {}
+    return render(request, "dashboard/Utility/utility.html", data)

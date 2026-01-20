@@ -211,3 +211,6 @@ def unit_dashboard_data():
             m["per"] = round((m["qty"] / u["curr_total"]) * 100, 2) if u["curr_total"] else 0
 
     return result
+
+
+

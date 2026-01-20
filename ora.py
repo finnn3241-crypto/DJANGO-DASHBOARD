@@ -41,7 +41,7 @@ def get_pg_connection():
 oracle_conn = get_oracle_connection()
 oracle_cur = oracle_conn.cursor()
 
-oracle_cur.execute("SELECT * FROM db_ins_data")
+oracle_cur.execute("SELECT * FROM rpt_fabric_db_v2_po")
 rows = oracle_cur.fetchall()
 
 # 🔹 Get column names dynamically
@@ -58,7 +58,7 @@ columns_sql = ", ".join(columns)
 placeholders = ", ".join(["%s"] * len(columns))
 
 insert_sql = f"""
-    INSERT INTO db_ins_data ({columns_sql})
+    INSERT INTO rpt_fabric_db_v2_po ({columns_sql})
     VALUES ({placeholders})
 """
 

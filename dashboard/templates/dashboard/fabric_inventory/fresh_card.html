@@ -39,7 +39,11 @@ body { margin:0; padding:0; background:#f5f6f8; font-family: 'IBM Plex Sans', sy
 /* CHART */
 .freshChartContainer{ text-align:center; margin-bottom:12px; }
 .freshChartText{ font-weight:700; font-size:16px; margin-top:8px; }
-.freshChartSubText{ font-size:14px; color:#2d2d2d; }
+.freshChartSubText{    
+     font-size: 15px;
+    color: #0d0d0d;
+    line-height: 2.2; 
+}
 
 /* STORE / SECTION BOX */
 .sectionBox{
@@ -75,8 +79,6 @@ body { margin:0; padding:0; background:#f5f6f8; font-family: 'IBM Plex Sans', sy
     font-size:16px;
     text-transform:uppercase;
 }
-{% comment %} .rowLabel{ font-weight:500; }
-.rowValue{ font-weight:500; } {% endcomment %}
 
 /* PROGRESS BARS */
 .bar-outer{
@@ -138,7 +140,7 @@ canvas{ width:96px !important; height:96px !important; margin:auto; }
     <canvas id="freshProgressChart"></canvas>
     <div class="freshChartText">{{ fresh.overall_pct }}% of Overall Inventory</div>
     <div class="freshChartSubText">
-        (Inventory: {{ fresh.total|intcomma }} / Meter: {{ kpi_meter|intcomma }})
+        (Inv: {{ fresh.total|intcomma }} / Meter: {{ kpi_meter|intcomma }})
     </div>
 </div>
 
@@ -201,7 +203,7 @@ canvas{ width:96px !important; height:96px !important; margin:auto; }
     <canvas id="stockProgressChart"></canvas>
     <div class="freshChartText">{{ stock.overall_pct }}% of Overall Inventory</div>
     <div class="freshChartSubText">
-        (Inventory: {{ stock.total|intcomma }} / Meter: {{ kpi_meter|intcomma }})
+        (Inv: {{ stock.total|intcomma }} / Meter: {{ kpi_meter|intcomma }})
     </div>
 </div>
 
@@ -213,8 +215,7 @@ canvas{ width:96px !important; height:96px !important; margin:auto; }
 <tr><td colspan="2"><div class="bar-outer"><div class="bar-inner" style="width:{{ stock.pct_others }}%;background:#2196f3;"></div><div class="bar-text">{{ stock.pct_others }}%</div></div></td></tr>
 
 <tr><td class="freshLabelCell">Total :</td><td class="freshValueCell">{{ stock.total|intcomma }}</td></tr>
-<tr><td colspan="2"><div class="bar-outer"><div class="bar-inner" style="width:{{ stock.pct_cancel }}"></div><div class="bar-text">{{ stock.pct_cancel }}%</div></div></td></tr>
-
+<tr><td colspan="2"><div class="empty-bar-outer"><div class="empty-bar-inner" style="width:{{ stock.pct_close }}"></div><div class="bar-text">&nbsp;</div></div></td></tr>
 <tr><td class="freshLabelCell">Soldout :</td><td class="freshValueCell">{{ stock.sold|intcomma }}</td></tr>
 <tr><td colspan="2"><div class="bar-outer"><div class="bar-inner" style="width:{{ stock.pct_sold }}%;background:#e91e63;"></div><div class="bar-text">{{ stock.pct_sold }}%</div></div></td></tr>
 
@@ -291,7 +292,7 @@ canvas{ width:96px !important; height:96px !important; margin:auto; }
     <canvas id="sampleProgressChart"></canvas>
     <div class="freshChartText">{{ sample.overall_pct }}% of Overall Inventory</div>
     <div class="freshChartSubText">
-        (Inventory: {{ sample.sample|intcomma }} / Meter: {{ kpi_meter|intcomma }})
+        (Inv: {{ sample.sample|intcomma }} / Meter: {{ kpi_meter|intcomma }})
     </div>
 </div>
 
@@ -380,7 +381,7 @@ canvas{ width:96px !important; height:96px !important; margin:auto; }
     <canvas id="returnProgressChart"></canvas>
     <div class="freshChartText">{{ sr.overall_pct }}% of Overall Inventory</div>
     <div class="freshChartSubText">
-        (Inventory: {{ sr.sales_return|intcomma }} / Meter: {{ kpi_meter|intcomma }})
+        (Inv: {{ sr.sales_return|intcomma }} / Meter: {{ kpi_meter|intcomma }})
     </div>
 </div>
 
@@ -466,55 +467,61 @@ canvas{ width:96px !important; height:96px !important; margin:auto; }
 <script>
 document.addEventListener("DOMContentLoaded", function () {
 
-    function buildChart(canvasId, inventory, total) {
+    function buildChart(canvasId, inventory, total, color = "#4caf50") {
         const el = document.getElementById(canvasId);
         if (!el) return;
 
         inventory = Number(inventory) || 0;
         total = Number(total) || 0;
 
-        const remaining = Math.max(total - inventory, 0);
+        let i = 0;
 
-        new Chart(el, {
+        // Initialize the chart
+        const chart = new Chart(el, {
             type: "doughnut",
             data: {
                 datasets: [{
-                    data: [inventory, remaining],
-                    backgroundColor: ["#4caf50", "#e0e0e0"],
+                    // Starts at 0, empty side is at full total
+                    data: [0, total], 
+                    backgroundColor: [color, "#e0e0e0"],
                     borderWidth: 0
                 }]
             },
             options: {
                 responsive: true,
                 cutout: "72%",
+                // Disable default animation to prevent flickering with our timer
+                animation: false, 
                 plugins: { legend: { display: false } }
             }
         });
+
+        // Animation logic
+        let timer = setInterval(() => {
+            if (i >= inventory) {
+                // Final snap to exact inventory and remaining values
+                chart.data.datasets[0].data = [inventory, Math.max(total - inventory, 0)];
+                chart.update();
+                clearInterval(timer);
+                return;
+            }
+
+            // Increment step (adjust 50 to make it faster or slower)
+            i += Math.ceil(inventory / 50);
+            
+            // Sync both sides: colored grows, gray shrinks
+            let currentRemaining = Math.max(total - i, 0);
+
+            chart.data.datasets[0].data = [i, currentRemaining];
+            chart.update();
+        }, 20);
     }
 
-    buildChart(
-        "freshProgressChart",
-        {{ fresh.total|default:0 }},
-        {{ kpi_meter|default:0 }}
-    );
-
-    buildChart(
-        "stockProgressChart",
-        {{ stock.total|default:0 }},
-        {{ kpi_meter|default:0 }}
-    );
-
-    buildChart(
-        "sampleProgressChart",
-        {{ sample.sample|default:0 }},
-        {{ kpi_meter|default:0 }}
-    );
-
-    buildChart(
-        "returnProgressChart",
-        {{ sr.sales_return|default:0 }},
-        {{ kpi_meter|default:0 }}
-    );
+    // Initialize each chart with its respective data
+    buildChart("freshProgressChart", {{ fresh.total|default:0 }}, {{ kpi_meter|default:0 }}, '#00A300');
+    buildChart("stockProgressChart", {{ stock.total|default:0 }}, {{ kpi_meter|default:0 }}, '#0077ff');
+    buildChart("sampleProgressChart", {{ sample.sample|default:0 }}, {{ kpi_meter|default:0 }}, '#ff0000');
+    buildChart("returnProgressChart", {{ sr.sales_return|default:0 }}, {{ kpi_meter|default:0 }}, '#ea00ff');
 
 });
 </script>

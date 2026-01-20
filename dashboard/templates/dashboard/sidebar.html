@@ -23,7 +23,11 @@
             transition: all 0.3s ease;
             z-index: 1000;
             overflow-y: auto;
+
+            display: flex;
+            flex-direction: column;
         }
+
 
         /* Sidebar Items */
         .nav-link {
@@ -171,6 +175,18 @@
             <a href="/yarn" class="nav-link"><i class="fa-solid fa-scroll"></i> <span>Yarn Inventory</span></a>
             <a href="/utility" class="nav-link"><i class="fas fa-bolt"></i> <span>Utility Management</span></a>
         </nav>
+        <div class="border-t border-slate-700 mt-auto">
+            <form method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button
+                    type="submit"
+                    class="nav-link w-full text-left text-red-400 hover:text-red-300 hover:bg-red-500/10"
+                >
+                    <i class="fas fa-right-from-bracket"></i>
+                    <span>Logout</span>
+                </button>
+            </form>
+        </div>
     </aside>
 
     <div class="main-wrapper" id="main-wrapper">

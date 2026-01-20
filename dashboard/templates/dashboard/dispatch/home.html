@@ -41,7 +41,11 @@ body {
 /* CHART */
 .freshChartContainer{ text-align:center; margin-bottom:12px; }
 .freshChartText{ font-weight:700; font-size:16px; margin-top:8px; }
-.freshChartSubText{ font-size:14px; color:#2d2d2d; }
+.freshChartSubText{    
+     font-size: 15px;
+    color: #0d0d0d;
+    line-height: 2.2; 
+}
 
 /* CANVAS SIZE */
 canvas{ width:96px !important; height:96px !important; margin:auto; }
@@ -252,35 +256,59 @@ canvas{ width:96px !important; height:96px !important; margin:auto; }
 <script>
 document.addEventListener("DOMContentLoaded", function () {
     
-    function buildChart(canvasId, current, total) {
-        const el = document.getElementById(canvasId);
-        if (!el) return;
+    function buildChart(canvasId, val, total, color) {
+        const ctx = document.getElementById(canvasId);
+        if (!ctx) return;
 
-        current = Number(current) || 0;
+        // Ensure values are numbers and handle defaults
+        val = Number(val) || 0;
         total = Number(total) || 0;
 
-        const remaining = Math.max(total - current, 0);
-
-        new Chart(el, {
-            type: "doughnut",
+        let i = 0;
+        
+        // Initialize the chart with 0 to start the animation
+        const chart = new Chart(ctx, {
+            type: 'doughnut',
             data: {
                 datasets: [{
-                    data: [current, remaining],
-                    backgroundColor: ["#00A300", "#E0E0E0"],
+                    data: [0, total],
+                    backgroundColor: [color, '#E0E0E0'],
                     borderWidth: 0
                 }]
             },
             options: {
                 responsive: true,
-                cutout: "72%",
-                plugins: { legend: { display: false } }
+                cutout: '72%',
+                plugins: {
+                    legend: { display: false },
+                    tooltip: { enabled: true }
+                }
             }
         });
+
+        // Animation Timer logic
+        let timer = setInterval(() => {
+            if (i >= val) {
+                // Ensure the final value is exact
+                chart.data.datasets[0].data = [val, Math.max(total - val, 0)];
+                chart.update();
+                clearInterval(timer);
+                return;
+            }
+
+            // Increment i (speed is roughly 1/60th of the total value per 15ms)
+            i += Math.ceil(val / 60);
+            
+            // Update data: [current_progress, remaining_space]
+            chart.data.datasets[0].data = [i, Math.max(total - i, 0)];
+            chart.update();
+        }, 15);
     }
 
-    buildChart("chart1", {{ curr_dispatch|default:0 }}, {{ total_plan|default:0 }});
-    buildChart("chart2", {{ curr_dispatch_L|default:0 }}, {{ total_plan_L|default:0 }});
-    buildChart("chart3", {{ curr_dispatch_tot|default:0 }}, {{ total_plan_tot|default:0 }});
+    // Initialize charts with your template variables and specific colors
+    buildChart("chart1", {{ curr_dispatch|default:0 }}, {{ total_plan|default:0 }}, '#00A300');
+    buildChart("chart2", {{ curr_dispatch_L|default:0 }}, {{ total_plan_L|default:0 }}, '#0077ff');
+    buildChart("chart3", {{ curr_dispatch_tot|default:0 }}, {{ total_plan_tot|default:0 }}, '#ff0000');
 
 });
 </script>

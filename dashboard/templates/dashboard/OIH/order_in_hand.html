@@ -59,7 +59,11 @@ body {
 
 .chart-container b{font-size:17px}
 .stat-line{font-weight:700;margin-top:8px; font-size:16px;}
-.stat-line-second{color:#2d2d2d; font-size:14px;}
+.stat-line-second{    
+     font-size: 15px;
+    color: #0d0d0d;
+    line-height: 2.2; 
+}
 
 .valueCell{font-size:30px;font-weight:700;text-align:center}
 .valueCelltxt{font-size:21px;font-weight:700;text-align:center;color:#b10000}
@@ -134,7 +138,7 @@ body {
 <div class="chart-container">
 <canvas id="chartExport" width="90" height="90" ></canvas>
 <div class="stat-line">{{ export.percentage }}% of Overall Order In Hand</div>
-<div class="stat-line-second">({{ export.curr_dispatch }} mtr / {{ export.total_plan }} mtr)</div>
+<div class="stat-line-second">(Order In Hand: {{ export.curr_dispatch }} mtr / Out Of : {{ export.total_plan }} mtr)</div>
 </div>
 
 <div class="sectionBox">
@@ -183,7 +187,7 @@ body {
 <div class="chart-container">
 <canvas id="chartLocal" width="90" height="90"></canvas>
 <div class="stat-line">{{ local.percentage }}% of Overall Order In Hand</div>
-<div class="stat-line-second">({{ local.curr_dispatch }} mtr / {{ local.total_plan }} mtr)</div>
+<div class="stat-line-second">(Order In Hand: {{ local.curr_dispatch }} mtr / Out Of: {{ local.total_plan }} mtr)</div>
 </div>
 
 <div class="sectionBox">

@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign In</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Inter", sans-serif;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #1e293b, #2a3e5f, #496a9e);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Animated background elements */
+body::before {
+    content: '';
+    position: absolute;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+    border-radius: 50%;
+    top: -250px;
+    right: -250px;
+    animation: float 20s infinite ease-in-out;
+}
+
+body::after {
+    content: '';
+    position: absolute;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+    border-radius: 50%;
+    bottom: -200px;
+    left: -200px;
+    animation: float 15s infinite ease-in-out reverse;
+}
+
+@keyframes float {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(30px, -30px) scale(1.1); }
+}
+
+/* Card */
+.login-container {
+    width: 100%;
+    max-width: 440px;
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(20px);
+    padding: 48px 42px;
+    border-radius: 24px;
+    box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.3),
+        0 0 1px rgba(255, 255, 255, 0.5) inset;
+    animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+    z-index: 1;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Header */
+.login-header {
+    text-align: center;
+    margin-bottom: 36px;
+}
+
+.login-logo {
+    width: 72px;
+    height: 72px;
+    background: linear-gradient(135deg, #2a3e5f, #496a9e);
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+    box-shadow: 0 8px 24px rgba(44, 83, 100, 0.4);
+    font-size: 32px;
+    animation: logoSpin 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes logoSpin {
+    from {
+        transform: scale(0) rotate(-180deg);
+    }
+    to {
+        transform: scale(1) rotate(0deg);
+    }
+}
+
+.dashboard-title {
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    color: #496a9e;
+    text-transform: uppercase;
+    opacity: 0.8;
+}
+
+/* Titles */
+.login-title {
+    font-size: 32px;
+    font-weight: 700;
+    color: #1a202c;
+    margin-bottom: 8px;
+    letter-spacing: -0.5px;
+}
+
+.login-subtitle {
+    font-size: 15px;
+    color: #718096;
+    margin-bottom: 32px;
+    font-weight: 400;
+}
+
+/* Form */
+.form-row {
+    margin-bottom: 24px;
+}
+
+.form-row label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #2d3748;
+}
+
+.input-wrapper {
+    position: relative;
+}
+
+.input-wrapper input {
+    width: 100%;
+    padding: 14px 16px 14px 48px;
+    font-size: 18px;
+    border-radius: 12px;
+    border: 2px solid #e2e8f0;
+    background: #ffffff;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    color: #2d3748;
+}
+
+.input-wrapper input::placeholder {
+    color: #a0aec0;
+}
+
+.input-wrapper input:focus {
+    outline: none;
+    border-color: #496a9e;
+    background: #ffffff;
+}
+
+.input-icon {
+    position: absolute;
+    top: 50%;
+    left: 16px;
+    transform: translateY(-50%);
+    font-size: 20px;
+    transition: all 0.3s ease;
+}
+
+.input-wrapper:focus-within .input-icon {
+    transform: translateY(-50%) scale(1.1);
+}
+
+/* Button */
+.login-btn {
+    width: 100%;
+    padding: 16px;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 12px;
+    border: none;
+    background: linear-gradient(135deg, #2a3e5f 0%, #496a9e 100%);
+    color: #ffffff;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 8px 20px rgba(44, 83, 100, 0.4);
+    position: relative;
+    overflow: hidden;
+}
+
+.login-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s;
+}
+
+.login-btn:hover::before {
+    left: 100%;
+}
+
+.login-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(44, 83, 100, 0.5);
+}
+
+.login-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 12px rgba(44, 83, 100, 0.4);
+}
+
+/* Django errors */
+.errorlist {
+    margin: 8px 0 0;
+    padding: 0;
+    list-style: none;
+    font-size: 13px;
+    color: #e53e3e;
+    animation: shake 0.4s ease;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-8px); }
+    75% { transform: translateX(8px); }
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .login-container {
+        padding: 36px 28px;
+    }
+    
+    .login-title {
+        font-size: 28px;
+    }
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="login-container">
+
+    <!-- Header -->
+    <div class="login-header">
+        <div class="login-logo">🔐</div>
+        <div class="dashboard-title">Management Dashboard</div>
+    </div>
+
+    <!-- Titles -->
+    <div class="login-title">Welcome Back</div>
+    <div class="login-subtitle">Sign in to continue to your account</div>
+
+    <!-- Form -->
+    <form method="post">
+        {% csrf_token %}
+        
+        <div class="form-row">
+            <label for="username">Username</label>
+            <div class="input-wrapper">
+                <span class="input-icon">👤</span>
+                {{ form.username }}
+            </div>
+            {{ form.username.errors }}
+        </div>
+
+        <div class="form-row">
+            <label for="password">Password</label>
+            <div class="input-wrapper">
+                <span class="input-icon">🔒</span>
+                {{ form.password }}
+            </div>
+            {{ form.password.errors }}
+        </div>
+
+        <button type="submit" class="login-btn">Sign In</button>
+    </form>
+
+</div>
+
+</body>
+</html>
+
+
+<script>
+window.addEventListener("beforeunload", function () {
+    document.cookie = "session_id=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/";
+});
+</script>

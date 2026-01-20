@@ -2,8 +2,6 @@
 
 {% block content %}
 
-
-
 {% load humanize %}
 <style>
 /* ===== GLOBAL STYLES ===== */
@@ -20,7 +18,7 @@ body {
 .dashboardContainer {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 24px;
 }
 
 /* ===== PAGE TITLE ===== */
@@ -38,20 +36,18 @@ body {
 
 /* ===== CARD ROW CONTAINER ===== */
 .cardRowContainer {
-  display: flex;
-  gap: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 24px;
   margin-bottom: 32px;
-  flex-wrap: wrap;
 }
 
 /* ===== INDIVIDUAL CARDS ===== */
 .dashCard {
-  flex: 1;
-  min-width: 300px;
   background: #ffffff;
   border-radius: 16px;
   border: 1px solid #e2e8f0;
-  padding: 20px;
+  padding: 24px;
   box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
   transition: all 0.3s ease;
 }
@@ -66,9 +62,9 @@ body {
   text-align: center;
   font-weight: 700;
   font-size: 16px;
-  padding: 10px 16px;
+  padding: 12px 16px;
   border-radius: 999px;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
@@ -86,14 +82,14 @@ body {
 /* ===== SECTION DIVIDERS ===== */
 .sectionDivider {
   border-top: 2px dashed #cbd5e1;
-  margin: 16px 0;
+  margin: 20px 0;
 }
 
 .sectionTitle {
   font-size: 13px;
   font-weight: 700;
-  color: #475569;
-  margin: 12px 0 8px 0;
+  color: #000000;
+  margin: 16px 0 12px 0;
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -102,10 +98,11 @@ body {
 .dataTable {
   width: 100%;
   border-collapse: collapse;
+  overflow-x: auto;
 }
 
 .dataTable td {
-  padding: 8px 4px;
+  padding: 10px 8px;
   font-size: 14px;
   border-bottom: 1px solid #f1f5f9;
 }
@@ -118,12 +115,14 @@ body {
   text-align: left;
   color: #334155;
   font-weight: 500;
+  white-space: nowrap;
 }
 
 .valueCell {
   text-align: right;
   color: #111827;
   font-weight: 600;
+  white-space: nowrap;
 }
 
 .percentCell {
@@ -132,18 +131,152 @@ body {
   font-weight: 700;
 }
 
-/* ===== RESPONSIVE DESIGN ===== */
-@media (max-width: 900px) {
+/* ===== TABLET RESPONSIVE (max-width: 1024px) ===== */
+@media (max-width: 1024px) {
+  .dashboardContainer {
+    padding: 20px;
+  }
+
   .cardRowContainer {
-    flex-direction: column;
+    grid-template-columns: 1fr;
+  }
+
+  .pageTitle {
+    font-size: 28px;
+  }
+
+  .dataTable td {
+    padding: 8px 6px;
+    font-size: 13px;
+  }
+}
+
+/* ===== MOBILE RESPONSIVE (max-width: 768px) ===== */
+@media (max-width: 768px) {
+  .dashboardContainer {
+    padding: 16px;
   }
 
   .pageTitle {
     font-size: 24px;
+    letter-spacing: 0.05em;
+    margin-bottom: 24px;
+  }
+
+  .cardRowContainer {
+    gap: 20px;
+    margin-bottom: 24px;
   }
 
   .dashCard {
+    padding: 20px;
+    border-radius: 12px;
+  }
+
+  .cardHeader {
+    font-size: 14px;
+    padding: 10px 12px;
+    margin-bottom: 16px;
+  }
+
+  .sectionTitle {
+    font-size: 12px;
+    margin: 12px 0 8px 0;
+  }
+
+  .sectionDivider {
+    margin: 16px 0;
+  }
+
+  .dataTable td {
+    padding: 8px 4px;
+    font-size: 12px;
+  }
+
+  .labelCell {
+    font-size: 12px;
+  }
+
+  .valueCell {
+    font-size: 12px;
+  }
+
+  .percentCell {
+    font-size: 11px;
+  }
+}
+
+/* ===== SMALL MOBILE (max-width: 480px) ===== */
+@media (max-width: 480px) {
+  .dashboardContainer {
+    padding: 12px;
+  }
+
+  .pageTitle {
+    font-size: 20px;
+    padding-bottom: 12px;
+    margin-bottom: 20px;
+  }
+
+  .cardRowContainer {
+    gap: 16px;
+  }
+
+  .dashCard {
+    padding: 16px;
+  }
+
+  .cardHeader {
+    font-size: 13px;
+    padding: 8px 10px;
+  }
+
+  /* Make table scrollable on very small screens */
+  .tableWrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .dataTable {
     min-width: 100%;
+  }
+
+  .dataTable td {
+    padding: 6px 3px;
+    font-size: 11px;
+  }
+
+  .labelCell {
+    max-width: 100px;
+    white-space: normal;
+    word-wrap: break-word;
+  }
+
+  .valueCell {
+    font-size: 11px;
+  }
+
+  .percentCell {
+    font-size: 10px;
+  }
+
+  .sectionTitle {
+    font-size: 11px;
+  }
+}
+
+/* ===== EXTRA SMALL SCREENS (max-width: 360px) ===== */
+@media (max-width: 360px) {
+  .pageTitle {
+    font-size: 18px;
+  }
+
+  .cardHeader {
+    font-size: 12px;
+  }
+
+  .dataTable td {
+    font-size: 10px;
   }
 }
 </style>
@@ -163,88 +296,100 @@ body {
     <div class="dashCard">
       <div class="cardHeader prevDay">Previous Day</div>
 
-      <table class="dataTable">
-        {% for r in prev_day_reason %}
-        <tr>
-          <td class="labelCell">{{ r.reason }}</td>
-          <td class="valueCell">Qty {{ r.qty|floatformat:"0"|intcomma }}</td>
-          <td class="valueCell percentCell">{{ r.per }}%</td>
-          <td class="valueCell">Rs. {{ r.amount|floatformat:"0"|intcomma }} @ {{ rate }} P.Kg</td>
-        </tr>
-        {% endfor %}
-      </table>
+      <div class="tableWrapper">
+        <table class="dataTable">
+          {% for r in prev_day_reason %}
+          <tr>
+            <td class="labelCell">{{ r.reason }}</td>
+            <td class="valueCell">Qty {{ r.qty|floatformat:"0"|intcomma }}</td>
+            <td class="valueCell percentCell">{{ r.per }}%</td>
+            <td class="valueCell">Rs. {{ r.amount|floatformat:"0"|intcomma }} @ {{ rate }} P.Kg</td>
+          </tr>
+          {% endfor %}
+        </table>
+      </div>
 
       <div class="sectionDivider"></div>
 
       <div class="sectionTitle">Manager Wise</div>
-      <table class="dataTable">
-        {% for m in prev_day_manager %}
-        <tr>
-          <td class="labelCell">{{ m.manager_name }}</td>
-          <td class="valueCell">Qty {{ m.qty|floatformat:"0"|intcomma }}</td>
-          <td class="valueCell">Rs. {{ m.amount|floatformat:"0"|intcomma }} @ {{ rate }} P.Kg</td>
-          <td class="valueCell percentCell">{{ m.per }}%</td>
-        </tr>
-        {% endfor %}
-      </table>
+      <div class="tableWrapper">
+        <table class="dataTable">
+          {% for m in prev_day_manager %}
+          <tr>
+            <td class="labelCell">{{ m.manager_name }}</td>
+            <td class="valueCell">Qty {{ m.qty|floatformat:"0"|intcomma }}</td>
+            <td class="valueCell">Rs. {{ m.amount|floatformat:"0"|intcomma }} @ {{ rate }} P.Kg</td>
+            <td class="valueCell percentCell">{{ m.per }}%</td>
+          </tr>
+          {% endfor %}
+        </table>
+      </div>
 
       <div class="sectionDivider"></div>
 
       <div class="sectionTitle">Category Wise</div>
-      <table class="dataTable">
-        {% for c in prev_day_category %}
-        <tr>
-          <td class="labelCell">{{ c.category }}</td>
-          <td class="valueCell">Qty {{ c.qty|floatformat:"0"|intcomma }}</td>
-          <td class="valueCell">Rs. {{ c.amount|floatformat:"0"|intcomma }} @ {{ rate }} P.Kg</td>
-          <td class="valueCell percentCell">{{ c.per }}%</td>
-        </tr>
-        {% endfor %}
-      </table>
+      <div class="tableWrapper">
+        <table class="dataTable">
+          {% for c in prev_day_category %}
+          <tr>
+            <td class="labelCell">{{ c.category }}</td>
+            <td class="valueCell">Qty {{ c.qty|floatformat:"0"|intcomma }}</td>
+            <td class="valueCell">Rs. {{ c.amount|floatformat:"0"|intcomma }} @ {{ rate }} P.Kg</td>
+            <td class="valueCell percentCell">{{ c.per }}%</td>
+          </tr>
+          {% endfor %}
+        </table>
+      </div>
     </div>
 
     <!-- CURRENT MONTH CARD -->
     <div class="dashCard">
       <div class="cardHeader currMonth">Current Month</div>
 
-      <table class="dataTable">
-        {% for r in month_reason %}
-        <tr>
-          <td class="labelCell">{{ r.reason }}</td>
-          <td class="valueCell">Qty {{ r.qty|floatformat:"0"|intcomma }}</td>
-          <td class="valueCell percentCell">{{ r.per }}%</td>
-          <td class="valueCell">Rs. {{ r.amount|floatformat:"0"|intcomma }} @ {{ rate }} P.Kg</td>
-        </tr>
-        {% endfor %}
-      </table>
+      <div class="tableWrapper">
+        <table class="dataTable">
+          {% for r in month_reason %}
+          <tr>
+            <td class="labelCell">{{ r.reason }}</td>
+            <td class="valueCell">Qty {{ r.qty|floatformat:"0"|intcomma }}</td>
+            <td class="valueCell percentCell">{{ r.per }}%</td>
+            <td class="valueCell">Rs. {{ r.amount|floatformat:"0"|intcomma }} @ {{ rate }} P.Kg</td>
+          </tr>
+          {% endfor %}
+        </table>
+      </div>
 
       <div class="sectionDivider"></div>
 
       <div class="sectionTitle">Manager Wise</div>
-      <table class="dataTable">
-        {% for m in month_manager %}
-        <tr>
-          <td class="labelCell">{{ m.manager_name }}</td>
-          <td class="valueCell">Qty {{ m.qty|floatformat:"0"|intcomma }}</td>
-          <td class="valueCell">Rs. {{ m.amount|floatformat:"0"|intcomma }} @ {{ rate }} P.Kg</td>
-          <td class="valueCell percentCell">{{ m.per }}%</td>
-        </tr>
-        {% endfor %}
-      </table>
+      <div class="tableWrapper">
+        <table class="dataTable">
+          {% for m in month_manager %}
+          <tr>
+            <td class="labelCell">{{ m.manager_name }}</td>
+            <td class="valueCell">Qty {{ m.qty|floatformat:"0"|intcomma }}</td>
+            <td class="valueCell">Rs. {{ m.amount|floatformat:"0"|intcomma }} @ {{ rate }} P.Kg</td>
+            <td class="valueCell percentCell">{{ m.per }}%</td>
+          </tr>
+          {% endfor %}
+        </table>
+      </div>
 
       <div class="sectionDivider"></div>
 
       <div class="sectionTitle">Category Wise</div>
-      <table class="dataTable">
-        {% for c in month_category %}
-        <tr>
-          <td class="labelCell">{{ c.category }}</td>
-          <td class="valueCell">Qty {{ c.qty|floatformat:"0"|intcomma }}</td>
-          <td class="valueCell">Rs. {{ c.amount|floatformat:"0"|intcomma }} @ {{ rate }} P.Kg</td>
-          <td class="valueCell percentCell">{{ c.per }}%</td>
-        </tr>
-        {% endfor %}
-      </table>
+      <div class="tableWrapper">
+        <table class="dataTable">
+          {% for c in month_category %}
+          <tr>
+            <td class="labelCell">{{ c.category }}</td>
+            <td class="valueCell">Qty {{ c.qty|floatformat:"0"|intcomma }}</td>
+            <td class="valueCell">Rs. {{ c.amount|floatformat:"0"|intcomma }} @ {{ rate }} P.Kg</td>
+            <td class="valueCell percentCell">{{ c.per }}%</td>
+          </tr>
+          {% endfor %}
+        </table>
+      </div>
     </div>
 
   </div>
